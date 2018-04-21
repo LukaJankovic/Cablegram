@@ -1,0 +1,5 @@
+data/org.gnome.Cablegram.desktop.in
+data/org.gnome.Cablegram.appdata.xml.in
+data/org.gnome.Cablegram.gschema.xml
+src/window.uisrc/main.py
+src/window.py
