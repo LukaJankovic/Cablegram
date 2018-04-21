@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="CablegramWindow" parent="GtkApplicationWindow">
-    <property name="default-width">600</property>
+  <template class="CablegramWindow" parent="GtkApplicationWindow"    <property name="default-width">600</property>
     <property name="default-height">300</property>
     <child type="titlebar">
       <object class="GtkHeaderBar" id="header_bar">

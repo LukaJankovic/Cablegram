@@ -18,6 +18,8 @@
 from gi.repository import Gtk
 from .gi_composites import GtkTemplate
 
+import inspect
+
 @GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
 class LoginWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'LoginWindow'
@@ -26,12 +28,5 @@ class LoginWindow(Gtk.ApplicationWindow):
         super().__init__(**kwargs)
         self.init_template()
 
-#@GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
-#class CablegramWindow(Gtk.ApplicationWindow):
-#    __gtype_name__ = 'CablegramWindow'
-
-#    label = GtkTemplate.Child()
-
-#    def __init__(self, **kwargs):
-#        super().__init__(**kwargs)
-#        self.init_template()
+        print(inspect.getmembers(LoginWindow, predicate=inspect.ismethod))
+        print(self.list_properties())

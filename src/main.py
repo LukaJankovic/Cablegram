@@ -37,12 +37,6 @@ class Application(Gtk.Application):
             loginWin = LoginWindow(application=self)
             loginWin.present()
 
-        #win = self.props.active_window
-        #if not win:
-        #    win = CablegramWindow(application=self)
-        #win.present()
-
-
 def main(version):
     app = Application()
     return app.run(sys.argv)
