@@ -18,13 +18,18 @@
 from gi.repository import Gtk
 from .gi_composites import GtkTemplate
 
+from pathlib import Path
+
 import webbrowser
+import configparser
 
 @GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
 class LoginWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'LoginWindow'
 
     loading_spinner = GtkTemplate.Child()
+    api_id = GtkTemplate.Child()
+    api_hash = GtkTemplate.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -36,5 +41,22 @@ class LoginWindow(Gtk.ApplicationWindow):
 
     @GtkTemplate.Callback
     def continue_clicked(self, widget, user_data):
-        print("continue clicked")
-        self.loading_spinner.start()
+
+        if self.api_id.get_text() and self.api_hash.get_text():
+
+            self.loading_spinner.start()
+
+            config = configparser.ConfigParser()
+
+            config.add_section("pyrogram")
+            config.set("pyrogram", "api_id", self.api_id.get_text())
+            config.set("pyrogram", "api_hash", self.api_hash.get_text())
+
+            ini_file = open(str(Path.home())+"/.config/cablegram.ini", "w+")
+
+            config.write(ini_file)
+            ini_file.close()
+
+        else:
+            print("empty fields!")
+                

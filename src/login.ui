@@ -50,7 +50,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry">
+                          <object class="GtkEntry" id="api_id">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="hexpand">True</property>
@@ -91,7 +91,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry">
+                          <object class="GtkEntry" id="api_hash">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="hexpand">True</property>
