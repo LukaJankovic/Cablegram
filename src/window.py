@@ -24,6 +24,8 @@ import webbrowser
 class LoginWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'LoginWindow'
 
+    loading_spinner = GtkTemplate.Child()
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
@@ -31,3 +33,8 @@ class LoginWindow(Gtk.ApplicationWindow):
     @GtkTemplate.Callback
     def api_clicked(self, widget, user_data):
         webbrowser.open("https://my.telegram.org/apps")
+
+    @GtkTemplate.Callback
+    def continue_clicked(self, widget, user_data):
+        print("continue clicked")
+        self.loading_spinner.start()
