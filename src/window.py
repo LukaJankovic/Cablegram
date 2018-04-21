@@ -18,7 +18,7 @@
 from gi.repository import Gtk
 from .gi_composites import GtkTemplate
 
-import inspect
+import webbrowser
 
 @GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
 class LoginWindow(Gtk.ApplicationWindow):
@@ -28,5 +28,6 @@ class LoginWindow(Gtk.ApplicationWindow):
         super().__init__(**kwargs)
         self.init_template()
 
-        print(inspect.getmembers(LoginWindow, predicate=inspect.ismethod))
-        print(self.list_properties())
+    @GtkTemplate.Callback
+    def api_clicked(self, widget, user_data):
+        webbrowser.open("https://my.telegram.org/apps")
