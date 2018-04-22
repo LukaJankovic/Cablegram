@@ -23,7 +23,7 @@ from pathlib import Path
 import webbrowser
 import configparser
 
-from pyrogram import Client, Filters
+from .universe import Universe
 
 @GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
 class LoginWindow(Gtk.ApplicationWindow):
@@ -75,7 +75,10 @@ class LoginWindow(Gtk.ApplicationWindow):
             config.write(ini_file)
             ini_file.close()
 
+            def code_callback():
+                print("code callback")
 
+            Global.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_nr.get_text(), code_callback)
 
         else:
             print("empty fields!")

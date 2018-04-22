@@ -31,6 +31,7 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 gettext.install('cablegram', localedir)
 
 if __name__ == '__main__':
+
     import gi
 
     from gi.repository import Gio

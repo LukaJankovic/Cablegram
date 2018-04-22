@@ -1,4 +1,6 @@
-# main.py
+#!/usr/bin/python3
+
+# cablegram.in
 #
 # Copyright 2018 LukaJankovic
 #
@@ -15,30 +17,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import sys
-import gi
+import signal
+import gettext
 
-gi.require_version('Gtk', '3.0')
+VERSION = '0.1.0'
+pkgdatadir = '/app/share/cablegram'
+localedir = '/app/share/locale'
 
-from gi.repository import Gtk, Gio
+sys.path.insert(1, pkgdatadir)
+signal.signal(signal.SIGINT, signal.SIG_DFL)
+gettext.install('cablegram', localedir)
 
-from .window import LoginWindow
+if __name__ == '__main__':
 
-class Application(Gtk.Application):
-    def __init__(self):
-        super().__init__(application_id='org.gnome.Cablegram',
-                         flags=Gio.ApplicationFlags.FLAGS_NONE)
+    import gi
 
-    def do_activate(self):
+    from gi.repository import Gio
+    resource = Gio.Resource.load(os.path.join(pkgdatadir, 'cablegram.gresource'))
+    resource._register()
 
-        print("hello!")
-
-        loggedin = False
-
-        if loggedin == False:
-            loginWin = LoginWindow(application=self)
-            loginWin.present()
-
-def main(version):
-    app = Application()
-    return app.run(sys.argv)
+    from cablegram import main
+    sys.exit(main.main(VERSION))

@@ -1,0 +1,2 @@
+tgcrypto>=1.0.4
+pyrogram>=0.7.1

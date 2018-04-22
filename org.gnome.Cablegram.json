@@ -1,3 +1,4 @@
+
 {
     "app-id" : "org.gnome.Cablegram",
     "runtime" : "org.gnome.Platform",
@@ -33,6 +34,29 @@
         "*.a"
     ],
     "modules" : [
+    	{
+            "name": "cpython",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://www.python.org/ftp/python/3.6.0/Python-3.6.0.tar.xz",
+                    "sha256": "b0c5f904f685e32d9232f7bdcbece9819a892929063b6e385414ad2dd6a23622"
+                }
+            ]
+        },
+        {
+        	"name": "pyrogram",
+        	"buidsystem": "simple",
+        	"ensure-writable": ["easy-install.pth"],
+        	"build-commands": ["python3 setup.py install --prefix=/app"],
+        	"sources": [
+        		{
+                	"type" : "archive",
+                	"url" : "https://files.pythonhosted.org/packages/c5/32/ad6e5a38b5ef710ffbd38d97009132d36d8835beac06498e09d4bc3cfe47/Pyrogram-0.7.1.tar.gz",
+                	"sha256" : "cca5d12ef0174a10fb7053e81e98c5058df42e557e4311df1113a64bda516e1e"
+                }
+        	]
+        },
         {
             "name" : "cablegram",
             "buildsystem" : "meson",

@@ -1,4 +1,6 @@
-# main.py
+#!@PYTHON@
+
+# universe.py
 #
 # Copyright 2018 LukaJankovic
 #
@@ -15,30 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
-import gi
+from pyrogram import Client, Filters
 
-gi.require_version('Gtk', '3.0')
+class Universe:
 
-from gi.repository import Gtk, Gio
+    app = None
 
-from .window import LoginWindow
-
-class Application(Gtk.Application):
     def __init__(self):
-        super().__init__(application_id='org.gnome.Cablegram',
-                         flags=Gio.ApplicationFlags.FLAGS_NONE)
+        print("global init")
 
-    def do_activate(self):
-
-        print("hello!")
-
-        loggedin = False
-
-        if loggedin == False:
-            loginWin = LoginWindow(application=self)
-            loginWin.present()
-
-def main(version):
-    app = Application()
-    return app.run(sys.argv)
+    def login(api_id, api_hash, phone_nr, callback):
+        app = Client("cablegram", api_id=api_id, api_hash=api_hash, phone_number=phone_nr, phone_code=callback)

@@ -30,6 +30,7 @@ cablegram_sources = [
   'gi_composites.py',
   'main.py',
   'window.py',
+  'universe.py'
 ]
 
 install_data(cablegram_sources, install_dir: moduledir)
