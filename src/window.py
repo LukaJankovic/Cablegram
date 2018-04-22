@@ -23,6 +23,8 @@ from pathlib import Path
 import webbrowser
 import configparser
 
+from pyrogram import Client, Filters
+
 @GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
 class LoginWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'LoginWindow'
@@ -30,10 +32,25 @@ class LoginWindow(Gtk.ApplicationWindow):
     loading_spinner = GtkTemplate.Child()
     api_id = GtkTemplate.Child()
     api_hash = GtkTemplate.Child()
+    phone_nr = GtkTemplate.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
+
+        config = configparser.ConfigParser()
+        config.read(str(Path.home())+"/.config/cablegram.ini")
+
+        try:
+            if config.get("pyrogram", "api_id"):
+                self.api_id.set_text(config.get("pyrogram", "api_id"))
+        except configparser.NoSectionError:
+            print("api_id empty")
+        try:
+            if config.get("pyrogram", "api_hash"):
+                self.api_hash.set_text(config.get("pyrogram", "api_hash"))
+        except configparser.NoSectionError:
+            print("api_hash empty")
 
     @GtkTemplate.Callback
     def api_clicked(self, widget, user_data):
@@ -51,11 +68,14 @@ class LoginWindow(Gtk.ApplicationWindow):
             config.add_section("pyrogram")
             config.set("pyrogram", "api_id", self.api_id.get_text())
             config.set("pyrogram", "api_hash", self.api_hash.get_text())
+            config.set("pyrogram", "phone_nr", self.phone_nr.get_text())
 
             ini_file = open(str(Path.home())+"/.config/cablegram.ini", "w+")
 
             config.write(ini_file)
             ini_file.close()
+
+
 
         else:
             print("empty fields!")
