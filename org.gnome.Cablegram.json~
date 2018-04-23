@@ -44,20 +44,22 @@
             ]
         },
         {
-        	"name" : "setuptools",
-			"buildsystem" : "simple",
-			"build-commands": ["python3 ./bootstrap.py; python3 setup.py install --prefix=/app"],
-        	"sources" : [
-        		{
-        			"type" : "archive",
-        			"url" : "https://github.com/pypa/setuptools/archive/v39.0.1.tar.gz",
-        			"sha256" : "0f0e9982e768b4d42764c17e157790c8039b9c76bd9df195b2df103dce1b5283"
-        		}
-        	]
+            "name" : "setuptools",
+            "buildsystem" : "simple",
+            "build-commands" : [
+                "python3 ./bootstrap.py; python3 setup.py install --prefix=/app"
+            ],
+            "sources" : [
+                {
+                    "type" : "archive",
+                    "url" : "https://github.com/pypa/setuptools/archive/v39.0.1.tar.gz",
+                    "sha256" : "0f0e9982e768b4d42764c17e157790c8039b9c76bd9df195b2df103dce1b5283"
+                }
+            ]
         },
         {
             "name" : "pyrogram",
-            "no-autogen": true,
+            "no-autogen" : true,
             "build-commands" : [
                 "python3 ./bootstrap.py"
             ],
@@ -68,9 +70,11 @@
                     "sha256" : "5cdfdda9b4819e6352dd290e23ff6c384d75cf8a64d0ab717f7c3fa35403b8f6"
                 },
                 {
-      				"type": "shell",
-      				"commands": [ "echo 'all:\n\ninstall:\n\tpython3 ./bootstrap.py\n\tpython3 ./setup.py install --prefix=/app' > makefile" ]
-    			}
+                    "type" : "shell",
+                    "commands" : [
+                        "echo 'all:\n\ninstall:\n\tpython3 ./bootstrap.py\n\tpython3 ./setup.py install --prefix=/app' > makefile"
+                    ]
+                }
             ]
         },
         {
