@@ -58,6 +58,46 @@
             ]
         },
         {
+        	"name" : "pysocks",
+        	"no-autogen" : true,
+        	"build-commands" : [
+        		"python3 setup.py install --prefix=/app"
+        	],
+        	"sources" : [
+        		{
+        			"type" : "archive",
+        			"url" : "https://github.com/Anorov/PySocks/archive/1.6.8.tar.gz",
+        			"sha256" : "a7f32ce1ac2b3467b793fdf14b23ad2b3ae139bcb10b6331fdecdae97ac6b821"
+        		},
+        		{
+                    "type" : "shell",
+                    "commands" : [
+                        "echo 'all:\n\ninstall:\n\tpython3 ./setup.py install --prefix=/app' > makefile"
+                    ]
+                }
+        	]
+        },
+        {
+        	"name" : "pyaes",
+        	"no-autogen" : true,
+        	"build-commands" : [
+        		"python3 setup.py install --prefix=/app"
+        	],
+        	"sources" : [
+        		{
+        			"type" : "archive",
+        			"url" : "https://files.pythonhosted.org/packages/44/66/2c17bae31c906613795711fc78045c285048168919ace2220daa372c7d72/pyaes-1.6.1.tar.gz",
+        			"sha256" : "02c1b1405c38d3c370b085fb952dd8bea3fadcee6411ad99f312cc129c536d8f"
+        		},
+        		{
+                    "type" : "shell",
+                    "commands" : [
+                        "echo 'all:\n\ninstall:\n\tpython3 ./setup.py install --prefix=/app' > makefile"
+                    ]
+                }
+        	]
+        },
+        {
             "name" : "pyrogram",
             "no-autogen" : true,
             "build-commands" : [

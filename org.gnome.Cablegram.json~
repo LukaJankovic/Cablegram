@@ -61,7 +61,7 @@
             "name" : "pyrogram",
             "no-autogen" : true,
             "build-commands" : [
-                "python3 ./bootstrap.py"
+                "python3 setup.py install --prefix=/app"
             ],
             "sources" : [
                 {
@@ -72,7 +72,7 @@
                 {
                     "type" : "shell",
                     "commands" : [
-                        "echo 'all:\n\ninstall:\n\tpython3 ./bootstrap.py\n\tpython3 ./setup.py install --prefix=/app' > makefile"
+                        "echo 'all:\n\ninstall:\n\tpython3 ./setup.py install --prefix=/app' > makefile"
                     ]
                 }
             ]
