@@ -58,62 +58,70 @@
             ]
         },
         {
-        	"name" : "pysocks",
-        	"no-autogen" : true,
-        	"build-commands" : [
-        		"python3 setup.py install --prefix=/app"
-        	],
-        	"sources" : [
-        		{
-        			"type" : "archive",
-        			"url" : "https://github.com/Anorov/PySocks/archive/1.6.8.tar.gz",
-        			"sha256" : "a7f32ce1ac2b3467b793fdf14b23ad2b3ae139bcb10b6331fdecdae97ac6b821"
-        		},
-        		{
-                    "type" : "shell",
-                    "commands" : [
-                        "echo 'all:\n\ninstall:\n\tpython3 ./setup.py install --prefix=/app' > makefile"
-                    ]
-                }
-        	]
-        },
-        {
-        	"name" : "pyaes",
-        	"no-autogen" : true,
-        	"build-commands" : [
-        		"python3 setup.py install --prefix=/app"
-        	],
-        	"sources" : [
-        		{
-        			"type" : "archive",
-        			"url" : "https://files.pythonhosted.org/packages/44/66/2c17bae31c906613795711fc78045c285048168919ace2220daa372c7d72/pyaes-1.6.1.tar.gz",
-        			"sha256" : "02c1b1405c38d3c370b085fb952dd8bea3fadcee6411ad99f312cc129c536d8f"
-        		},
-        		{
-                    "type" : "shell",
-                    "commands" : [
-                        "echo 'all:\n\ninstall:\n\tpython3 ./setup.py install --prefix=/app' > makefile"
-                    ]
-                }
-        	]
-        },
-        {
-            "name" : "pyrogram",
-            "no-autogen" : true,
+            "name" : "pysocks",
+            "buildsystem" : "simple",
+            "ensure-writable" : [
+                "easy-install.pth"
+            ],
             "build-commands" : [
-                "python3 setup.py install --prefix=/app"
+                "python3.5 setup.py install --prefix=/app"
             ],
             "sources" : [
                 {
                     "type" : "archive",
-                    "url" : "https://github.com/pyrogram/pyrogram/archive/v0.7.1.tar.gz",
-                    "sha256" : "5cdfdda9b4819e6352dd290e23ff6c384d75cf8a64d0ab717f7c3fa35403b8f6"
-                },
+                    "url" : "https://files.pythonhosted.org/packages/53/12/6bf1d764f128636cef7408e8156b7235b150ea31650d0260969215bb8e7d/PySocks-1.6.8.tar.gz",
+                    "sha256" : "3fe52c55890a248676fd69dc9e3c4e811718b777834bcaab7a8125cf9deac672"
+                }
+            ]
+        },
+        {
+            "name" : "pyaes",
+            "buildsystem" : "simple",
+            "ensure-writable" : [
+                "easy-install.pth"
+            ],
+            "build-commands" : [
+                "python3.5 setup.py install --prefix=/app"
+            ],
+            "sources" : [
                 {
-                    "type" : "shell",
-                    "commands" : [
-                        "echo 'all:\n\ninstall:\n\tpython3 ./setup.py install --prefix=/app' > makefile"
-                    ]
+                    "type" : "archive",
+                    "url" : "https://files.pythonhosted.org/packages/44/66/2c17bae31c906613795711fc78045c285048168919ace2220daa372c7d72/pyaes-1.6.1.tar.gz",
+                    "sha256" : "02c1b1405c38d3c370b085fb952dd8bea3fadcee6411ad99f312cc129c536d8f"
+                }
+            ]
+        },
+        {
+            "name" : "tgcrypto",
+            "buildsystem" : "simple",
+            "ensure-writable" : [
+                "easy-install.pth"
+            ],
+            "build-commands" : [
+                "python3.5 setup.py install --prefix=/app"
+            ],
+            "sources" : [
+                {
+                    "type" : "archive",
+                    "url" : "https://files.pythonhosted.org/packages/d4/8a/23890ad6b0868e4f6882b196390ac0390e8eb873cebe39286a763f3bf31b/TgCrypto-1.0.4.tar.gz",
+                    "sha256" : "1bc9dc34f01858b558a1fe3a98ad6b810c14a21f7c3cb5a0a8973eb486e526f6"
+                }
+            ]
+        },
+        {
+            "name" : "pyrogram",
+            "buildsystem" : "simple",
+            "ensure-writable" : [
+                "easy-install.pth"
+            ],
+            "build-commands" : [
+                "python3.5 setup.py install --prefix=/app"
+            ],
+            "sources" : [
+                {
+                    "type" : "archive",
+                    "url" : "https://files.pythonhosted.org/packages/c5/32/ad6e5a38b5ef710ffbd38d97009132d36d8835beac06498e09d4bc3cfe47/Pyrogram-0.7.1.tar.gz",
+                    "sha256" : "cca5d12ef0174a10fb7053e81e98c5058df42e557e4311df1113a64bda516e1e"
                 }
             ]
         },

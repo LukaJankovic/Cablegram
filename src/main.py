@@ -31,8 +31,6 @@ class Application(Gtk.Application):
 
     def do_activate(self):
 
-        print("hello!")
-
         loggedin = False
 
         if loggedin == False:

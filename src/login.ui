@@ -189,7 +189,7 @@
             <property name="vexpand">True</property>
             <property name="column_spacing">12</property>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="continue_button">
                 <property name="label" translatable="yes">Continue</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
