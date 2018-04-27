@@ -78,55 +78,46 @@ class LoginWindow(Gtk.ApplicationWindow):
             config.write(ini_file)
             ini_file.close()
 
+            window = Gtk.Window()
+            window.set_title("Confirmation Code")
+            window.set_default_size(300, 0)
+            window.set_modal(True)
+            window.set_transient_for(self)
+            window.set_resizable(False)
+            window.connect('destroy', self.destroy)
+
+            code_entry = Gtk.Entry()
+            code_entry.set_hexpand(True)
+
+            def confirm_callback(event):
+                event.set()
+
+            event = threading.Event()
+
+            confirm_button = Gtk.Button.new_with_label("Confirm")
+            confirm_button.set_hexpand(True)
+            confirm_button.set_halign(Gtk.Align.END)
+            confirm_button.connect("clicked", confirm_callback, event)
+
+            grid = Gtk.Grid()
+            grid.set_margin_left(12)
+            grid.set_margin_right(12)
+            grid.set_margin_top(12)
+            grid.set_margin_bottom(12)
+            grid.set_row_spacing(12)
+            grid.set_hexpand(True)
+
+            grid.attach(code_entry, 0, 0, 1, 1)
+            grid.attach(confirm_button, 0, 1, 1, 1)
+
+            window.add(grid)
+            window.show_all()
+
             def code_callback():
-
-                def confirm_callback(button, event):
-                    event.set()
-
-                def draw_window():
-                    window = Gtk.Window()
-                    window.set_title("Confirmation Code")
-                    window.set_default_size(300, 0)
-                    window.set_modal(True)
-                    window.set_transient_for(self)
-                    window.set_resizable(False)
-                    window.connect('destroy', self.destroy)
-
-                    event = threading.Event()
-
-                    code_entry = Gtk.Entry()
-                    code_entry.set_hexpand(True)
-
-                    confirm_button = Gtk.Button.new_with_label("Confirm")
-                    confirm_button.set_hexpand(True)
-                    confirm_button.set_halign(Gtk.Align.END)
-                    confirm_button.connect("clicked", confirm_callback, event)
-
-                    grid = Gtk.Grid()
-                    grid.set_margin_left(12)
-                    grid.set_margin_right(12)
-                    grid.set_margin_top(12)
-                    grid.set_margin_bottom(12)
-                    grid.set_row_spacing(12)
-                    grid.set_hexpand(True)
-
-                    grid.attach(code_entry, 0, 0, 1, 1)
-                    grid.attach(confirm_button, 0, 1, 1, 1)
-
-                    window.add(grid)
-                    window.show_all()
-
-                    event.wait()
-                    print(code_entry.get_text())
-                    return code_entry.get_text()
-
-                #t = threading.Thread(target=draw_window)
-                #t.start()
-
+                event.wait()
+                print(code_entry.get_text())
 
             code_callback()
-            #print(code_callback())
-
             #Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_nr.get_text(), code_callback)
 
         else:
