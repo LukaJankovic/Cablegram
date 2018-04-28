@@ -9,7 +9,7 @@
     <property name="has_resize_grip">True</property>
     <property name="use_header_bar">1</property>
     <child>
-      <object class="GtkGrid">
+      <object class="GtkGrid" id="api_page">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
@@ -44,7 +44,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry">
+                      <object class="GtkEntry" id="api_id">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="hexpand">True</property>
@@ -87,7 +87,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkEntry">
+                      <object class="GtkEntry" id="api_hash">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="hexpand">True</property>
@@ -114,7 +114,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton">
+          <object class="GtkButton" id="get_api_keys">
             <property name="label" translatable="yes">Get API Keys</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
@@ -137,12 +137,11 @@
       </object>
       <packing>
         <property name="title" translatable="yes">API Keys</property>
-        <property name="complete">True</property>
         <property name="has_padding">False</property>
       </packing>
     </child>
     <child>
-      <object class="GtkListBox">
+      <object class="GtkListBox" id="phone_page">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="selection_mode">none</property>
@@ -163,7 +162,7 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">label</property>
+                    <property name="label" translatable="yes">Phone Number</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -171,7 +170,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="phone_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
@@ -194,7 +193,6 @@
       </object>
       <packing>
         <property name="title" translatable="yes">Phone</property>
-        <property name="complete">True</property>
         <property name="has_padding">False</property>
       </packing>
     </child>
@@ -220,7 +218,7 @@
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">label</property>
+                    <property name="label" translatable="yes">Confirmation Code</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -251,7 +249,6 @@
       </object>
       <packing>
         <property name="title" translatable="yes">Code</property>
-        <property name="complete">True</property>
         <property name="has_padding">False</property>
       </packing>
     </child>
