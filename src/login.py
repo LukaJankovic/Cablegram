@@ -25,6 +25,7 @@ from pathlib import Path
 
 import webbrowser
 import configparser
+import threading
 
 @GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
 class LoginWindow(Gtk.Assistant):
@@ -33,6 +34,7 @@ class LoginWindow(Gtk.Assistant):
 
     api_page = GtkTemplate.Child()
     phone_page = GtkTemplate.Child()
+    code_page = GtkTemplate.Child()
     api_id = GtkTemplate.Child()
     api_hash = GtkTemplate.Child()
     phone_entry = GtkTemplate.Child()
@@ -64,7 +66,21 @@ class LoginWindow(Gtk.Assistant):
         def open_url(bump):
             webbrowser.open("https://my.telegram.org/apps")
 
+        def code_callback():
+            event.wait()
+            print("done")
+
+        event = threading.Event()
+
+        def assistant_prepare(info1, info2):
+            if info2 == self.code_page:
+                code_callback()
+                #Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_nr.get_text(), code_callback)
+            elif info1 == self.code_page:
+                event.set()
+
         self.connect("cancel", exit)
+        self.connect("prepare", assistant_prepare)
         self.api_id.connect("changed", api_changed)
         self.api_hash.connect("changed", api_changed)
         self.phone_entry.connect("changed", phone_changed)
