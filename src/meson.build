@@ -29,7 +29,7 @@ cablegram_sources = [
   '__init__.py',
   'gi_composites.py',
   'main.py',
-  'window.py',
+  'login.py',
   'universe.py'
 ]
 

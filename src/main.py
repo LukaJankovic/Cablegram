@@ -22,7 +22,8 @@ gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk, Gio
 
-from .window import LoginWindow
+#from .window import LoginWindow
+from .login import LoginWindow
 
 class Application(Gtk.Application):
     def __init__(self):

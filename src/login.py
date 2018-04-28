@@ -1,4 +1,4 @@
-# window.py
+# login.py
 #
 # Copyright 2018 LukaJankovic
 #
@@ -15,37 +15,26 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, GObject
+
+from gi.repository import Gtk, Gdk, GObject
 from .gi_composites import GtkTemplate
-
-from pathlib import Path
-from time import sleep
-
-import webbrowser
-import configparser
-import threading
-import functools
 
 from .universe import Universe
 
 @GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
-class LoginWindow(Gtk.ApplicationWindow):
+class LoginWindow(Gtk.Assistant):
+
     __gtype_name__ = 'LoginWindow'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
 
-        config = configparser.ConfigParser()
-        config.read(str(Path.home())+"/.config/cablegram.ini")
+        style_provider = Gtk.CssProvider()
+        style_provider.load_from_resource("/org/gnome/Cablegram/login.css")
 
-        try:
-            if config.get("pyrogram", "api_id"):
-                self.api_id.set_text(config.get("pyrogram", "api_id"))
-        except configparser.NoSectionError:
-            print("api_id empty")
-        try:
-            if config.get("pyrogram", "api_hash"):
-                self.api_hash.set_text(config.get("pyrogram", "api_hash"))
-        except configparser.NoSectionError:
-            print("api_hash empty")
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(),
+            style_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
