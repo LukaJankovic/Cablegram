@@ -66,5 +66,6 @@ class Universe:
         print("global init")
 
     def login(self, api_id, api_hash, phone_nr, callback):
-        app = Client("cablegram", api_id=int(api_id), api_hash=api_hash, phone_number=phone_nr, phone_code=callback)
-        app.start()
+        print("start pyrogram")
+        #app = Client("cablegram", api_id=int(api_id), api_hash=api_hash, phone_number=phone_nr, phone_code=callback)
+        #app.start()

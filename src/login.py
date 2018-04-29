@@ -38,6 +38,7 @@ class LoginWindow(Gtk.Assistant):
     api_id = GtkTemplate.Child()
     api_hash = GtkTemplate.Child()
     phone_entry = GtkTemplate.Child()
+    code_entry = GtkTemplate.Child()
     get_api_keys = GtkTemplate.Child()
 
     def __init__(self, **kwargs):
@@ -63,27 +64,40 @@ class LoginWindow(Gtk.Assistant):
             if self.phone_entry.get_text():
                 self.set_page_complete(self.phone_page, True)
 
+        def code_changed(bump):
+            if self.code_entry.get_text():
+                self.set_page_complete(self.code_page, True)
+
         def open_url(bump):
             webbrowser.open("https://my.telegram.org/apps")
 
-        def code_callback():
-            event.wait()
-            print("done")
-
         event = threading.Event()
+
+        def code_callback():
+
+            def wait_for_code():
+                event.wait()
+                return self.code_entry.get_text()
+
+            print("starting auth")
+            Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_entry.get_text(), code_callback)
+            #print("code "+wait_for_code())
 
         def assistant_prepare(info1, info2):
             if info2 == self.code_page:
-                code_callback()
-                #Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_nr.get_text(), code_callback)
-            elif info1 == self.code_page:
-                event.set()
+                t = threading.Thread(target=code_callback)
+                t.start()
+
+        def assistant_apply(info):
+            event.set()
 
         self.connect("cancel", exit)
         self.connect("prepare", assistant_prepare)
+        self.connect("apply", assistant_apply)
         self.api_id.connect("changed", api_changed)
         self.api_hash.connect("changed", api_changed)
         self.phone_entry.connect("changed", phone_changed)
+        self.code_entry.connect("changed", code_changed)
         self.get_api_keys.connect("clicked", open_url)
 
         #Apply ini

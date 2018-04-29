@@ -227,7 +227,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="code_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="hexpand">True</property>
@@ -249,6 +249,7 @@
         </style>
       </object>
       <packing>
+        <property name="page_type">confirm</property>
         <property name="title" translatable="yes">Code</property>
         <property name="has_padding">False</property>
       </packing>
@@ -302,6 +303,12 @@
       <placeholder/>
     </child>
     <child type="titlebar">
+      <placeholder/>
+    </child>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
       <placeholder/>
     </child>
     <child>
