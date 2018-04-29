@@ -17,7 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from pyrogram import Client, Filters
+import pyrogram
+#from pyrogram import Client, Filters
 
 class Singleton:
     """
@@ -66,6 +67,12 @@ class Universe:
         print("global init")
 
     def login(self, api_id, api_hash, phone_nr, callback):
-        print("start pyrogram")
-        #app = Client("cablegram", api_id=int(api_id), api_hash=api_hash, phone_number=phone_nr, phone_code=callback)
-        #app.start()
+        print("pyrogram login")
+
+        try:
+            app = pyrogram.Client("cablegram", api_id=api_id, api_hash=api_hash, phone_number=phone_nr, phone_code=callback)
+            app.start()
+            return None
+        except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
+            #Flood error
+            return error

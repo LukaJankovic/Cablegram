@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from gi.repository import Gtk, Gdk, GObject
+from gi.repository import Gtk, Gdk, GLib, GObject
 from .gi_composites import GtkTemplate
 
 from .universe import Universe
@@ -26,6 +26,8 @@ from pathlib import Path
 import webbrowser
 import configparser
 import threading
+import os
+import pyrogram
 
 @GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
 class LoginWindow(Gtk.Assistant):
@@ -72,6 +74,7 @@ class LoginWindow(Gtk.Assistant):
             webbrowser.open("https://my.telegram.org/apps")
 
         event = threading.Event()
+        GObject.threads_init()
 
         def code_callback():
 
@@ -79,9 +82,23 @@ class LoginWindow(Gtk.Assistant):
                 event.wait()
                 return self.code_entry.get_text()
 
-            print("starting auth")
-            Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_entry.get_text(), code_callback)
-            #print("code "+wait_for_code())
+            error = Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_entry.get_text(), code_callback)
+            if error:
+                if type(error) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
+
+                    def exit_app(respm, info):
+                        os._exit(0)
+
+                    def show_error():
+                        error_dialog = Gtk.MessageDialog(parent         = self,
+                                                         flags          = Gtk.DialogFlags.MODAL,
+                                                         type           = Gtk.MessageType.ERROR,
+                                                         buttons        = Gtk.ButtonsType.CLOSE,
+                                                         message_format = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds")
+                        error_dialog.connect("response", exit_app)
+                        error_dialog.show()
+
+                    GLib.idle_add(show_error)
 
         def assistant_prepare(info1, info2):
             if info2 == self.code_page:
