@@ -27,6 +27,8 @@ import webbrowser
 import configparser
 import threading
 import os
+import re
+
 import pyrogram
 
 @GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
@@ -63,8 +65,10 @@ class LoginWindow(Gtk.Assistant):
                 self.set_page_complete(self.api_page, True)
 
         def phone_changed(bump):
-            if self.phone_entry.get_text():
+            if re.compile('\+[0-9]+').match(self.phone_entry.get_text()):
                 self.set_page_complete(self.phone_page, True)
+            else:
+                self.set_page_complete(self.phone_page, False)
 
         def code_changed(bump):
             if self.code_entry.get_text():
@@ -84,21 +88,31 @@ class LoginWindow(Gtk.Assistant):
 
             error = Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_entry.get_text(), code_callback)
             if error:
-                if type(error) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
+                print(error)
+                print(type(error))
 
-                    def exit_app(respm, info):
-                        os._exit(0)
+                def exit_dialog(widget, info):
+                    widget.destroy()
+                    self.set_current_page(1)
 
-                    def show_error():
-                        error_dialog = Gtk.MessageDialog(parent         = self,
-                                                         flags          = Gtk.DialogFlags.MODAL,
-                                                         type           = Gtk.MessageType.ERROR,
-                                                         buttons        = Gtk.ButtonsType.CLOSE,
-                                                         message_format = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds")
-                        error_dialog.connect("response", exit_app)
-                        error_dialog.show()
+                dialog_message = None
 
-                    GLib.idle_add(show_error)
+                if type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid:
+                    dialog_message = "Invalid phone number. Please try again."
+
+                elif type(error) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
+                    dialog_message = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds"
+
+                def show_error():
+                    error_dialog = Gtk.MessageDialog(parent         = self,
+                                                     flags          = Gtk.DialogFlags.MODAL,
+                                                     type           = Gtk.MessageType.ERROR,
+                                                     buttons        = Gtk.ButtonsType.CLOSE,
+                                                     message_format = dialog_message)
+                    error_dialog.connect("response", exit_dialog)
+                    error_dialog.show()
+
+                GLib.idle_add(show_error)
 
         def assistant_prepare(info1, info2):
             if info2 == self.code_page:

@@ -5,6 +5,8 @@
   <template class="LoginWindow" parent="GtkAssistant">
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
+    <property name="default_width">500</property>
+    <property name="default_height">500</property>
     <property name="gravity">center</property>
     <property name="has_resize_grip">True</property>
     <property name="use_header_bar">1</property>
@@ -303,6 +305,9 @@
       <placeholder/>
     </child>
     <child type="titlebar">
+      <placeholder/>
+    </child>
+    <child>
       <placeholder/>
     </child>
     <child>

@@ -76,3 +76,6 @@ class Universe:
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
             #Flood error
             return error
+        except pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid as error:
+            #Invalid number
+            return error
