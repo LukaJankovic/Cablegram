@@ -79,3 +79,7 @@ class Universe:
         except pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid as error:
             #Invalid number
             return error
+        except pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid as error:
+            #Invalid API
+            #Pyrogram goes crazy here so uh don't enter the wrong api key please
+            return error

@@ -64,8 +64,10 @@ class LoginWindow(Gtk.Assistant):
             os._exit(0)
 
         def api_changed(bump):
-            if self.api_id.get_text() and self.api_hash.get_text():
+            if re.compile('[0-9]+').match(self.api_id.get_text()) and self.api_hash.get_text():
                 self.set_page_complete(self.api_page, True)
+            else:
+                self.set_page_complete(self.api_page, False)
 
         def phone_changed(bump):
             if re.compile('\+[0-9]+').match(self.phone_entry.get_text()):
@@ -92,11 +94,12 @@ class LoginWindow(Gtk.Assistant):
             error = Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_entry.get_text(), wait_for_code)
             if error:
 
-                def exit_dialog(widget, info):
+                def exit_dialog(widget, info, page_index):
                     widget.destroy()
-                    self.set_current_page(1)
+                    self.set_current_page(page_index)
 
                 dialog_message = None
+                return_to = 1
 
                 if type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid:
                     dialog_message = "Invalid phone number. Please try again."
@@ -104,13 +107,17 @@ class LoginWindow(Gtk.Assistant):
                 elif type(error) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
                     dialog_message = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds."
 
+                elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid:
+                    dialog_message = "Invalid API ID and / or API Hash."
+                    return_to = 0
+
                 def show_error():
                     error_dialog = Gtk.MessageDialog(parent         = self,
                                                      flags          = Gtk.DialogFlags.MODAL,
                                                      type           = Gtk.MessageType.ERROR,
                                                      buttons        = Gtk.ButtonsType.CLOSE,
                                                      message_format = dialog_message)
-                    error_dialog.connect("response", exit_dialog)
+                    error_dialog.connect("response", exit_dialog, return_to)
                     error_dialog.show()
 
                 GLib.idle_add(show_error)

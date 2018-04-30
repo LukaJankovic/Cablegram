@@ -17,13 +17,15 @@
 
 import sys
 import gi
+import os.path
+
+from pathlib import Path
 
 gi.require_version('Gtk', '3.0')
-
 from gi.repository import Gtk, Gio
 
-#from .window import LoginWindow
 from .login import LoginWindow
+from .universe import Universe
 
 class Application(Gtk.Application):
     def __init__(self):
@@ -34,9 +36,15 @@ class Application(Gtk.Application):
 
         loggedin = False
 
+        #if os.path.isfile(str(Path.home()) + "/cablegram.session"):
+        #    loggedin = True
+
         if loggedin == False:
             loginWin = LoginWindow(application=self)
             loginWin.present()
+
+        else:
+            Universe.instance().login()
 
 def main(version):
     app = Application()
