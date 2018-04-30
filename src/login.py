@@ -60,6 +60,9 @@ class LoginWindow(Gtk.Assistant):
         )
 
         #Connections
+        def exit_app(bump):
+            os._exit(0)
+
         def api_changed(bump):
             if self.api_id.get_text() and self.api_hash.get_text():
                 self.set_page_complete(self.api_page, True)
@@ -86,10 +89,8 @@ class LoginWindow(Gtk.Assistant):
                 event.wait()
                 return self.code_entry.get_text()
 
-            error = Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_entry.get_text(), code_callback)
+            error = Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_entry.get_text(), wait_for_code)
             if error:
-                print(error)
-                print(type(error))
 
                 def exit_dialog(widget, info):
                     widget.destroy()
@@ -101,7 +102,7 @@ class LoginWindow(Gtk.Assistant):
                     dialog_message = "Invalid phone number. Please try again."
 
                 elif type(error) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
-                    dialog_message = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds"
+                    dialog_message = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds."
 
                 def show_error():
                     error_dialog = Gtk.MessageDialog(parent         = self,
@@ -122,7 +123,7 @@ class LoginWindow(Gtk.Assistant):
         def assistant_apply(info):
             event.set()
 
-        self.connect("cancel", exit)
+        self.connect("cancel", exit_app)
         self.connect("prepare", assistant_prepare)
         self.connect("apply", assistant_apply)
         self.api_id.connect("changed", api_changed)
