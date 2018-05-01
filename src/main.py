@@ -18,6 +18,7 @@
 import sys
 import gi
 import os.path
+import configparser
 
 from pathlib import Path
 
@@ -25,6 +26,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio
 
 from .login import LoginWindow
+from .universe_window import UniverseWindow
 from .universe import Universe
 
 class Application(Gtk.Application):
@@ -36,7 +38,7 @@ class Application(Gtk.Application):
 
         loggedin = False
 
-        if os.path.isfile(str(Path.home()) + "/cablegram.session"):
+        if os.path.isfile(str(Path.home()) + "/cablegram.session") and os.path.isfile(str(Path.home())+"/.config/cablegram.ini"):
             loggedin = True
 
         if loggedin == False:
@@ -44,7 +46,19 @@ class Application(Gtk.Application):
             loginWin.present()
 
         else:
-            Universe.instance().login()
+
+            config = configparser.ConfigParser()
+            config.read(str(Path.home())+"/.config/cablegram.ini")
+
+            error = Universe.instance().login(config.get("pyrogram", "api_id"), config.get("pyrogram", "api_hash"), config.get("pyrogram", "phone_number"), None)
+
+            if not error:
+                #Show main window
+                universe_window = UniverseWindow(application=self)
+                universe_window.present()
+            else:
+                print("==ERROR==")
+                print(error)
 
 def main(version):
     app = Application()

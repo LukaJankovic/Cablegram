@@ -20,6 +20,7 @@ from gi.repository import Gtk, Gdk, GLib, GObject
 from .gi_composites import GtkTemplate
 
 from .universe import Universe
+from .universe_window import UniverseWindow
 
 from pathlib import Path
 
@@ -130,9 +131,19 @@ class LoginWindow(Gtk.Assistant):
                 config = configparser.ConfigParser()
                 config.read(str(Path.home())+"/.config/cablegram.ini")
 
+                if not config.has_section('pyrogram'):
+                    config.add_section('pyrogram')
                 config.set("pyrogram", "api_id", self.api_id.get_text())
                 config.set("pyrogram", "api_hash", self.api_hash.get_text())
                 config.set("pyrogram", "phone_number", self.phone_entry.get_text())
+
+                with open(str(Path.home())+"/.config/cablegram.ini", "w+") as config_file:
+                    config.write(config_file)
+
+                universe_window = UniverseWindow()
+                universe_window.present()
+
+                self.destroy()
 
         def assistant_prepare(info1, info2):
             if info2 == self.code_page:

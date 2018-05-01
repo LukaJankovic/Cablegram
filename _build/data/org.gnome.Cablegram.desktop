@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=cablegram
-Exec=cablegram
-Terminal=false
-Type=Application
-Categories=GTK;
-StartupNotify=true

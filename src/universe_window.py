@@ -1,6 +1,4 @@
-#!/usr/bin/python3
-
-# cablegram.in
+# universe_window.py
 #
 # Copyright 2018 LukaJankovic
 #
@@ -17,26 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import sys
-import signal
-import gettext
+from gi.repository import Gtk, Gdk, GLib, GObject
+from .gi_composites import GtkTemplate
 
-VERSION = '0.1.0'
-pkgdatadir = '/app/share/cablegram'
-localedir = '/app/share/locale'
+@GtkTemplate(ui='/org/gnome/Cablegram/universe.ui')
+class UniverseWindow(Gtk.ApplicationWindow):
 
-sys.path.insert(1, pkgdatadir)
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-gettext.install('cablegram', localedir)
+    __gtype_name__ = 'UniverseWindow'
 
-if __name__ == '__main__':
-
-    import gi
-
-    from gi.repository import Gio
-    resource = Gio.Resource.load(os.path.join(pkgdatadir, 'cablegram.gresource'))
-    resource._register()
-
-    from cablegram import main
-    sys.exit(main.main(VERSION))
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.init_template()
