@@ -96,7 +96,8 @@ class LoginWindow(Gtk.Assistant):
 
                 def exit_dialog(widget, info, page_index):
                     widget.destroy()
-                    self.set_current_page(page_index)
+                    if not page_index == -1:
+                        self.set_current_page(page_index)
 
                 dialog_message = None
                 return_to = 1
@@ -109,7 +110,10 @@ class LoginWindow(Gtk.Assistant):
 
                 elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid:
                     dialog_message = "Invalid API ID and / or API Hash."
-                    return_to = 0
+
+                elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid:
+                    dialog_message = "Invalid confirmation code."
+                    return_to = -1
 
                 def show_error():
                     error_dialog = Gtk.MessageDialog(parent         = self,
@@ -121,6 +125,14 @@ class LoginWindow(Gtk.Assistant):
                     error_dialog.show()
 
                 GLib.idle_add(show_error)
+            else:
+                #Apply ini
+                config = configparser.ConfigParser()
+                config.read(str(Path.home())+"/.config/cablegram.ini")
+
+                config.set("pyrogram", "api_id", self.api_id.get_text())
+                config.set("pyrogram", "api_hash", self.api_hash.get_text())
+                config.set("pyrogram", "phone_number", self.phone_entry.get_text())
 
         def assistant_prepare(info1, info2):
             if info2 == self.code_page:

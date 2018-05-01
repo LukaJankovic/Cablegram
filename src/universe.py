@@ -81,5 +81,8 @@ class Universe:
             return error
         except pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid as error:
             #Invalid API
-            #Pyrogram goes crazy here so uh don't enter the wrong api key please
+            #TODO: Pyrogram goes crazy here so uh don't enter the wrong api key please
+            return error
+        except pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid as error:
+            #Invalid phone code
             return error

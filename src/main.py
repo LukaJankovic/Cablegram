@@ -36,8 +36,8 @@ class Application(Gtk.Application):
 
         loggedin = False
 
-        #if os.path.isfile(str(Path.home()) + "/cablegram.session"):
-        #    loggedin = True
+        if os.path.isfile(str(Path.home()) + "/cablegram.session"):
+            loggedin = True
 
         if loggedin == False:
             loginWin = LoginWindow(application=self)
