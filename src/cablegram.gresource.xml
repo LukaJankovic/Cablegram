@@ -3,6 +3,8 @@
   <gresource prefix="/org/gnome/Cablegram">
     <file>login.ui</file>
     <file>universe.ui</file>
+    <file>sidebar.ui</file>
     <file>login.css</file>
+    <file>universe.css</file>
   </gresource>
 </gresources>

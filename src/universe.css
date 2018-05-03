@@ -1,0 +1,7 @@
+.sidebar_listbox {
+  background-color: #F5F5F5;
+}
+
+.sidebar_listbox > row {
+  margin-bottom: 7px;
+}

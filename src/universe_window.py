@@ -18,14 +18,39 @@
 from gi.repository import Gtk, Gdk, GLib, GObject
 from .gi_composites import GtkTemplate
 
+from .sidebar import SidebarChatItem
+
 @GtkTemplate(ui='/org/gnome/Cablegram/universe.ui')
 class UniverseWindow(Gtk.ApplicationWindow):
 
     __gtype_name__ = 'UniverseWindow'
 
+    sidebar_list = GtkTemplate.Child()
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
 
-    def present(self, **kwargs):
-        super().present(**kwargs)
+        #Apply CSS
+        style_provider = Gtk.CssProvider()
+        style_provider.load_from_resource("/org/gnome/Cablegram/universe.css")
+
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(),
+            style_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+
+
+        def sidebar_clicked(self, row):
+            print("sidebar clicked! index: "+str(row.get_index()))
+            row.destroy()
+
+        self.sidebar_list.connect('row-activated', sidebar_clicked)
+
+        for i in range(10):
+            sidebarItem = SidebarChatItem()
+            sidebarItem.contact_label.set_text("Contact #"+str(i))
+            sidebarItem.chat_label.set_text("You: Some message.")
+
+            self.sidebar_list.insert(sidebarItem, -1)

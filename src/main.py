@@ -38,14 +38,13 @@ class Application(Gtk.Application):
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
 
     def hide_login(self, data):
-        print("completion callback3")
-        self.loginWin.hide()
+        if self.loginWin:
+            self.loginWin.hide()
 
     def start_universe(self):
 
-        print("completion callback2")
-
         #Show main window
+        print("Start main window")
         universe_window = UniverseWindow(application=self)
         universe_window.connect('show', self.hide_login)
         universe_window.present()
@@ -53,6 +52,11 @@ class Application(Gtk.Application):
     def do_activate(self):
 
         loggedin = False
+        debug = True
+
+        if debug:
+            self.start_universe()
+            loggedin = True
 
         if os.path.isfile(str(Path.home()) + "/cablegram.session") and os.path.isfile(str(Path.home())+"/.config/cablegram.ini"):
             loggedin = True
@@ -61,8 +65,8 @@ class Application(Gtk.Application):
             self.loginWin = LoginWindow(application=self)
             self.loginWin.completion_callback = self.start_universe
             self.loginWin.present()
-        else:
 
+        elif debug == False:
             config = configparser.ConfigParser()
             config.read(str(Path.home())+"/.config/cablegram.ini")
 
