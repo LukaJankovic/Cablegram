@@ -26,3 +26,6 @@ class UniverseWindow(Gtk.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
+
+    def present(self, **kwargs):
+        super().present(**kwargs)

@@ -46,6 +46,8 @@ class LoginWindow(Gtk.Assistant):
     code_entry = GtkTemplate.Child()
     get_api_keys = GtkTemplate.Child()
 
+    completion_callback = None
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
@@ -140,15 +142,17 @@ class LoginWindow(Gtk.Assistant):
                 with open(str(Path.home())+"/.config/cablegram.ini", "w+") as config_file:
                     config.write(config_file)
 
-                universe_window = UniverseWindow()
-                universe_window.present()
-
-                self.destroy()
+                if self.completion_callback:
+                    print("completion callback1")
+                    self.completion_callback()
 
         def assistant_prepare(info1, info2):
             if info2 == self.code_page:
                 t = threading.Thread(target=code_callback)
                 t.start()
+            #if info2 == self.phone_page:
+            #    if self.completion_callback:
+            #        self.completion_callback()
 
         def assistant_apply(info):
             event.set()

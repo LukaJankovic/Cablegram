@@ -30,9 +30,25 @@ from .universe_window import UniverseWindow
 from .universe import Universe
 
 class Application(Gtk.Application):
+
+    loginWin = None
+
     def __init__(self):
         super().__init__(application_id='org.gnome.Cablegram',
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
+
+    def hide_login(self, data):
+        print("completion callback3")
+        self.loginWin.hide()
+
+    def start_universe(self):
+
+        print("completion callback2")
+
+        #Show main window
+        universe_window = UniverseWindow(application=self)
+        universe_window.connect('show', self.hide_login)
+        universe_window.present()
 
     def do_activate(self):
 
@@ -42,9 +58,9 @@ class Application(Gtk.Application):
             loggedin = True
 
         if loggedin == False:
-            loginWin = LoginWindow(application=self)
-            loginWin.present()
-
+            self.loginWin = LoginWindow(application=self)
+            self.loginWin.completion_callback = self.start_universe
+            self.loginWin.present()
         else:
 
             config = configparser.ConfigParser()
@@ -53,9 +69,7 @@ class Application(Gtk.Application):
             error = Universe.instance().login(config.get("pyrogram", "api_id"), config.get("pyrogram", "api_hash"), config.get("pyrogram", "phone_number"), None)
 
             if not error:
-                #Show main window
-                universe_window = UniverseWindow(application=self)
-                universe_window.present()
+                self.start_universe()
             else:
                 print("==ERROR==")
                 print(error)
