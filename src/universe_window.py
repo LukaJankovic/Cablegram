@@ -50,7 +50,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         for i in range(10):
             sidebarItem = SidebarChatItem()
-            sidebarItem.contact_label.set_text("Contact #"+str(i))
+            sidebarItem.contact_label.set_text("Anastasija Jankovic")
             sidebarItem.chat_label.set_text("You: Some message.")
 
             self.sidebar_list.insert(sidebarItem, -1)
