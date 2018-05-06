@@ -64,5 +64,5 @@ class Universe(Singleton):
             return error
 
     def get_contacts(self):
-        return self.app.send(functions.contacts.GetTopPeers(offset=0, limit=0, hash=0, correspondents=True, groups=True, channels=True))
+        return self.app.send(functions.contacts.GetTopPeers(offset=0, limit=0, hash=0, correspondents=True, groups=True))
         

@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from gi.repository import Gtk, Gdk, GLib, GObject
 from .gi_composites import GtkTemplate
 
@@ -48,7 +50,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 
         for i in Universe.instance().get_contacts()["users"]:
-            print(i)
+            user = json.dumps(i, ensure_ascii=False, encoding='utf8')
             sidebarItem = SidebarChatItem()
             try:
                 sidebarItem.contact_label.set_text(i["first_name"]+" "+i["last_name"])
