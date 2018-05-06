@@ -52,7 +52,7 @@ class Application(Gtk.Application):
     def do_activate(self):
 
         loggedin = False
-        debug = True
+        debug = False
 
         if debug:
             self.start_universe()

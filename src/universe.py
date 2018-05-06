@@ -18,49 +18,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pyrogram
+import threading
+
+from pyrogram.api import functions, types
 #from pyrogram import Client, Filters
 
-class Singleton:
-    """
-    A non-thread-safe helper class to ease implementing singletons.
-    This should be used as a decorator -- not a metaclass -- to the
-    class that should be a singleton.
+class Singleton(object):
+    __singleton_lock = threading.Lock()
+    __singleton_instance = None
 
-    The decorated class can define one `__init__` function that
-    takes only the `self` argument. Also, the decorated class cannot be
-    inherited from. Other than that, there are no restrictions that apply
-    to the decorated class.
+    @classmethod
+    def instance(cls):
+        if not cls.__singleton_instance:
+            with cls.__singleton_lock:
+                if not cls.__singleton_instance:
+                    cls.__singleton_instance = cls()
+        return cls.__singleton_instance
 
-    To get the singleton instance, use the `instance` method. Trying
-    to use `__call__` will result in a `TypeError` being raised.
-
-    """
-
-    def __init__(self, decorated):
-        self._decorated = decorated
-
-    def instance(self):
-        """
-        Returns the singleton instance. Upon its first call, it creates a
-        new instance of the decorated class and calls its `__init__` method.
-        On all subsequent calls, the already created instance is returned.
-
-        """
-        try:
-            return self._instance
-        except AttributeError:
-            self._instance = self._decorated()
-            return self._instance
-
-    def __call__(self):
-        raise TypeError('Singletons must be accessed through `instance()`.')
-
-    def __instancecheck__(self, inst):
-        return isinstance(inst, self._decorated)
-
-@Singleton
-class Universe:
-
+class Universe(Singleton):
     app = None
 
     def __init__(self):
@@ -70,8 +45,9 @@ class Universe:
         print("pyrogram login")
 
         try:
-            app = pyrogram.Client("cablegram", api_id=api_id, api_hash=api_hash, phone_number=phone_nr, phone_code=callback)
-            app.start()
+            self.app = pyrogram.Client("cablegram", api_id=api_id, api_hash=api_hash, phone_number=phone_nr, phone_code=callback)
+            self.app.start()
+
             return None
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
             #Flood error
@@ -86,3 +62,7 @@ class Universe:
         except pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid as error:
             #Invalid phone code
             return error
+
+    def get_contacts(self):
+        return self.app.send(functions.contacts.GetTopPeers(offset=0, limit=0, hash=0, correspondents=True, groups=True, channels=True))
+        

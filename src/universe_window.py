@@ -19,6 +19,7 @@ from gi.repository import Gtk, Gdk, GLib, GObject
 from .gi_composites import GtkTemplate
 
 from .sidebar import SidebarChatItem
+from .universe import Universe
 
 @GtkTemplate(ui='/org/gnome/Cablegram/universe.ui')
 class UniverseWindow(Gtk.ApplicationWindow):
@@ -41,16 +42,19 @@ class UniverseWindow(Gtk.ApplicationWindow):
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
-
         def sidebar_clicked(self, row):
             print("sidebar clicked! index: "+str(row.get_index()))
-            row.destroy()
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 
-        for i in range(10):
+        for i in Universe.instance().get_contacts()["users"]:
+            print(i)
             sidebarItem = SidebarChatItem()
-            sidebarItem.contact_label.set_text("Anastasija Jankovic")
+            try:
+                sidebarItem.contact_label.set_text(i["first_name"]+" "+i["last_name"])
+            except TypeError as e:
+                print("Type error @ contact")
+                print(i)
             sidebarItem.chat_label.set_text("You: Some message.")
 
             self.sidebar_list.insert(sidebarItem, -1)

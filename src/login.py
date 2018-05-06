@@ -143,7 +143,7 @@ class LoginWindow(Gtk.Assistant):
                     config.write(config_file)
 
                 if self.completion_callback:
-                    print("completion callback1")
+                    #TODO: This closes the f****** app.
                     self.completion_callback()
 
         def assistant_prepare(info1, info2):
