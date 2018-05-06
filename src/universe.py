@@ -64,5 +64,18 @@ class Universe(Singleton):
             return error
 
     def get_contacts(self):
-        return self.app.send(functions.contacts.GetTopPeers(offset=0, limit=0, hash=0, correspondents=True, groups=True))
-        
+        try:
+            return self.app.send(functions.contacts.GetTopPeers(offset=0, limit=0, hash=0, correspondents=True, groups=True))
+        except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
+            #Flood error
+            return error
+        except pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid as error:
+            #Invalid number
+            return error
+        except pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid as error:
+            #Invalid API
+            #TODO: Pyrogram goes crazy here so uh don't enter the wrong api key please
+            return error
+        except pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid as error:
+            #Invalid phone code
+            return error

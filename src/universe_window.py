@@ -16,6 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+import os
+
+import pyrogram
 
 from gi.repository import Gtk, Gdk, GLib, GObject
 from .gi_composites import GtkTemplate
@@ -29,6 +32,8 @@ class UniverseWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'UniverseWindow'
 
     sidebar_list = GtkTemplate.Child()
+
+    contacts = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -49,14 +54,51 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 
-        for i in Universe.instance().get_contacts()["users"]:
-            user = json.dumps(i, ensure_ascii=False, encoding='utf8')
-            sidebarItem = SidebarChatItem()
-            try:
-                sidebarItem.contact_label.set_text(i["first_name"]+" "+i["last_name"])
-            except TypeError as e:
-                print("Type error @ contact")
-                print(i)
-            sidebarItem.chat_label.set_text("You: Some message.")
+        self.contacts = Universe.instance().get_contacts()
 
-            self.sidebar_list.insert(sidebarItem, -1)
+        #Error handling start
+        dialog_message = None
+
+        def show_error():
+            error_dialog = Gtk.MessageDialog(parent         = self,
+                                             flags          = Gtk.DialogFlags.MODAL,
+                                             type           = Gtk.MessageType.ERROR,
+                                             buttons        = Gtk.ButtonsType.CLOSE,
+                                             message_format = dialog_message)
+            error_dialog.connect("response", exit_dialog)
+            error_dialog.show()
+
+        def exit_dialog(widget, info):
+            widget.destroy()
+            os._exit(0)
+
+        if type(self.contacts) is pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid:
+            dialog_message = "Invalid phone number. Please try again."
+            show_error()
+
+        elif type(self.contacts) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
+            dialog_message = "You're trying to access Telegram too often. Try again in "+ str(self.contacts.x) +" seconds."
+            show_error()
+
+        elif type(self.contacts) is pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid:
+            dialog_message = "Invalid API ID and / or API Hash."
+            show_error()
+
+        elif type(self.contacts) is pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid:
+            dialog_message = "Invalid confirmation code."
+            show_error()
+
+        #Error handling done
+
+        else:
+            for i in self.contacts["users"]:
+                user = json.dumps(i, ensure_ascii=False, encoding='utf8')
+                sidebarItem = SidebarChatItem()
+                try:
+                    sidebarItem.contact_label.set_text(i["first_name"]+" "+i["last_name"])
+                except TypeError as e:
+                    print("Type error @ contact")
+                    print(i)
+                sidebarItem.chat_label.set_text("You: Some message.")
+
+                self.sidebar_list.insert(sidebarItem, -1)

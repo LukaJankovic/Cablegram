@@ -17,8 +17,11 @@
 
 import sys
 import gi
+import os
 import os.path
 import configparser
+
+import pyrogram
 
 from pathlib import Path
 
@@ -75,8 +78,32 @@ class Application(Gtk.Application):
             if not error:
                 self.start_universe()
             else:
-                print("==ERROR==")
-                print(error)
+                def exit_dialog(widget, info):
+                    widget.destroy()
+                    os._exit(0)
+
+                dialog_message = None
+
+                if type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid:
+                    dialog_message = "Invalid phone number. Please try again."
+
+                elif type(error) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
+                    dialog_message = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds."
+
+                elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid:
+                    dialog_message = "Invalid API ID and / or API Hash."
+
+                elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid:
+                    dialog_message = "Invalid confirmation code."
+
+                def show_error():
+                    error_dialog = Gtk.MessageDialog(parent         = self,
+                                                     flags          = Gtk.DialogFlags.MODAL,
+                                                     type           = Gtk.MessageType.ERROR,
+                                                     buttons        = Gtk.ButtonsType.CLOSE,
+                                                     message_format = dialog_message)
+                    error_dialog.connect("response", exit_dialog)
+                    error_dialog.show()
 
 def main(version):
     app = Application()
