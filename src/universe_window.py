@@ -56,7 +56,9 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.contacts = Universe.instance().get_contacts()
 
+        #TODO: Push error handling to other file
         #Error handling start
+
         dialog_message = None
 
         def show_error():
@@ -92,10 +94,15 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         else:
             for i in self.contacts["users"]:
-                user = json.dumps(i, ensure_ascii=False, encoding='utf8')
+
+                if not i.first_name:
+                    i.first_name = ""
+                if not i.last_name:
+                    i.last_name = ""
+
                 sidebarItem = SidebarChatItem()
                 try:
-                    sidebarItem.contact_label.set_text(i["first_name"]+" "+i["last_name"])
+                    sidebarItem.contact_label.set_text(i.first_name+" "+i.last_name)
                 except TypeError as e:
                     print("Type error @ contact")
                     print(i)
