@@ -70,6 +70,7 @@ class Universe(Singleton):
             new_dialogs = []
 
             for dialog in dialogs["dialogs"]:
+
                 if type(dialog["peer"]) == types.PeerUser:
                     current_user = None
                     for user in dialogs["users"]:
@@ -79,7 +80,23 @@ class Universe(Singleton):
                     if not current_user:
                         print("Something has gone terribly wrong...")
 
-                    new_dialogs.append({"type":"user","user":current_user})
+                    return_item = {"type":"user","user":current_user}
+
+                    current_message = None
+
+                    for message in dialogs["messages"]:
+                        if message["id"] == dialog["top_message"]:
+                            current_message = message
+
+                    return_item["message"] = current_message
+
+                    if message["from_id"] == current_user["id"]:
+                        return_item["from"] = "remote"
+
+                    else:
+                        return_item["from"] = "you"
+
+                    new_dialogs.append(return_item)
 
                 elif type(dialog["peer"]) == types.PeerChat:
                     current_chat = None
@@ -90,11 +107,29 @@ class Universe(Singleton):
                     if not current_chat:
                         print("Something has gone terribly wrong 2")
 
-                    new_dialogs.append({"type":"chat","chat":current_chat})
+                    return_item = {"type":"chat","chat":current_chat}
+
+                    current_message = None
+
+                    for message in dialogs["messages"]:
+                        if message["id"] == dialog["top_message"]:
+                            current_message = message
+
+                    return_item["message"] = current_message
+
+                    if message["from_id"] == current_user["id"]:
+                        return_item["from"] = "remote"
+
+                    else:
+                        return_item["from"] = "you"
+
+
+                    new_dialogs.append(return_item)
 
 
                 else:
-                    print("Other type of chat: ")
+                    #TODO: Other dialogs, i.e. channels
+                    print("Other type of dialog: ")
                     print(dialog)
 
             return new_dialogs

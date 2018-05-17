@@ -113,6 +113,15 @@ class UniverseWindow(Gtk.ApplicationWindow):
                 elif dialog["type"] == "chat":
                     sidebarItem.contact_label.set_text(dialog["chat"]["title"])
 
-                sidebarItem.chat_label.set_text("You: Some message.")
+                print(dialog["message"])
+
+                try:
+                    sidebarItem.chat_label.set_text(dialog["message"]["message"])
+                except AttributeError as e:
+                    print("Unexpected message")
+                    print("Error:")
+                    print(e)
+                    print("Item")
+                    print(dialog["message"])
 
                 self.sidebar_list.insert(sidebarItem, -1)
