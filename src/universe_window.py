@@ -54,7 +54,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 
-        self.contacts = Universe.instance().get_contacts()
+        self.contacts = Universe.instance().get_dialogs()
 
         #TODO: Push error handling to other file
         #Error handling start
@@ -91,21 +91,28 @@ class UniverseWindow(Gtk.ApplicationWindow):
             show_error()
 
         #Error handling done
-
         else:
-            for i in self.contacts["users"]:
 
-                if not i.first_name:
-                    i.first_name = ""
-                if not i.last_name:
-                    i.last_name = ""
+            for dialog in self.contacts:
 
                 sidebarItem = SidebarChatItem()
-                try:
-                    sidebarItem.contact_label.set_text(i.first_name+" "+i.last_name)
-                except TypeError as e:
-                    print("Type error @ contact")
-                    print(i)
+
+                if dialog["type"] == "user":
+
+                    first = dialog["user"]["first_name"]
+                    last = dialog["user"]["last_name"]
+
+                    if not dialog["user"]["first_name"]:
+                        first = ""
+
+                    if not dialog["user"]["last_name"]:
+                        last = ""
+
+                    sidebarItem.contact_label.set_text(first+" "+last)
+
+                elif dialog["type"] == "chat":
+                    sidebarItem.contact_label.set_text(dialog["chat"]["title"])
+
                 sidebarItem.chat_label.set_text("You: Some message.")
 
                 self.sidebar_list.insert(sidebarItem, -1)

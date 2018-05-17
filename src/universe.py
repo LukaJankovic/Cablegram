@@ -63,9 +63,43 @@ class Universe(Singleton):
             #Invalid phone code
             return error
 
-    def get_contacts(self):
+    def get_dialogs(self):
         try:
-            return self.app.send(functions.contacts.GetTopPeers(offset=0, limit=0, hash=0, correspondents=True, groups=True))
+            dialogs = self.app.send(functions.messages.GetDialogs(offset_date=0, offset_id=0, offset_peer=types.InputPeerEmpty(), limit=0))
+
+            new_dialogs = []
+
+            for dialog in dialogs["dialogs"]:
+                if type(dialog["peer"]) == types.PeerUser:
+                    current_user = None
+                    for user in dialogs["users"]:
+                        if user["id"] == dialog["peer"]["user_id"]:
+                            current_user = user
+
+                    if not current_user:
+                        print("Something has gone terribly wrong...")
+
+                    new_dialogs.append({"type":"user","user":current_user})
+
+                elif type(dialog["peer"]) == types.PeerChat:
+                    current_chat = None
+                    for chat in dialogs["chats"]:
+                        if chat["id"] == dialog["peer"]["chat_id"]:
+                            current_chat = chat
+
+                    if not current_chat:
+                        print("Something has gone terribly wrong 2")
+
+                    new_dialogs.append({"type":"chat","chat":current_chat})
+
+
+                else:
+                    print("Other type of chat: ")
+                    print(dialog)
+
+            return new_dialogs
+
+
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
             #Flood error
             return error
