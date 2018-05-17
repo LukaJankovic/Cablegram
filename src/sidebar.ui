@@ -18,8 +18,8 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
-            <property name="hexpand">True</property>
             <property name="label" translatable="yes">Contact #1</property>
+            <property name="ellipsize">end</property>
           </object>
           <packing>
             <property name="left_attach">0</property>
@@ -32,8 +32,10 @@
             <property name="can_focus">False</property>
             <property name="halign">start</property>
             <property name="margin_top">2</property>
-            <property name="hexpand">True</property>
             <property name="label" translatable="yes">You: Some message.</property>
+            <property name="ellipsize">end</property>
+            <property name="single_line_mode">True</property>
+            <property name="lines">1</property>
             <attributes>
               <attribute name="weight" value="light"/>
               <attribute name="scale" value="0.90000000000000002"/>
