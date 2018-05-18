@@ -90,7 +90,7 @@ class Universe(Singleton):
 
                     return_item["message"] = current_message
 
-                    if message["from_id"] == current_user["id"]:
+                    if current_message["from_id"] == current_user["id"]:
                         return_item["from"] = "remote"
 
                     else:
@@ -117,15 +117,22 @@ class Universe(Singleton):
 
                     return_item["message"] = current_message
 
-                    if message["from_id"] == current_user["id"]:
-                        return_item["from"] = "remote"
-
-                    else:
+                    if current_message["from_id"] == current_user["id"]:
                         return_item["from"] = "you"
 
+                    else:
+                        return_item["from"] = "remote"
+
+                        sender = None
+                        for user in dialogs["users"]:
+                            if user["id"] == current_message["from_id"]:
+                                sender = user
+
+                        print(sender)
+
+                        return_item["chat_from"] = sender
 
                     new_dialogs.append(return_item)
-
 
                 else:
                     #TODO: Other dialogs, i.e. channels
