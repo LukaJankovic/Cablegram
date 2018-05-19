@@ -25,6 +25,7 @@ from .gi_composites import GtkTemplate
 
 from .sidebar import SidebarChatItem
 from .universe import Universe
+from .chat_view import ChatView
 
 @GtkTemplate(ui='/org/gnome/Cablegram/universe.ui')
 class UniverseWindow(Gtk.ApplicationWindow):
@@ -32,8 +33,10 @@ class UniverseWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'UniverseWindow'
 
     sidebar_list = GtkTemplate.Child()
+    chat_container = GtkTemplate.Child()
 
     contacts = None
+    chat_view = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -48,6 +51,10 @@ class UniverseWindow(Gtk.ApplicationWindow):
             style_provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
+
+        #
+        # Sidebar
+        #
 
         def sidebar_clicked(self, row):
             print("sidebar clicked! index: "+str(row.get_index()))
@@ -128,3 +135,11 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     print(dialog["message"])
 
                 self.sidebar_list.insert(sidebarItem, -1)
+
+        #
+        # Chat View
+        #
+
+        self.chat_view = Gtk.TextView()
+        self.chat_view.get_buffer().set_text("testing")
+        self.chat_container.add_with_viewport(self.chat_view)

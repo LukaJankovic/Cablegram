@@ -32,7 +32,8 @@ cablegram_sources = [
   'login.py',
   'universe.py',
   'universe_window.py',
-  'sidebar.py'
+  'sidebar.py',
+  'chat_view.py'
 ]
 
 install_data(cablegram_sources, install_dir: moduledir)
