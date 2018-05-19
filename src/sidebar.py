@@ -26,6 +26,10 @@ class SidebarChatItem(Gtk.ListBoxRow):
     contact_label = GtkTemplate.Child()
     chat_label = GtkTemplate.Child()
 
+    first_name = None
+    last_name = None
+    chat_name = None
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()

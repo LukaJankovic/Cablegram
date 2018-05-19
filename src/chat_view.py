@@ -15,22 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, Gdk, GLib, GObject
+class chat_view_manager:
 
-class ChatView(Gtk.TextView):
+    ctx = None
+    longest_name = -1
 
-    __gtype_name__ = 'ChatView'
+    def __init__(self, ctx):
+        self.ctx = ctx
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.init_template()
+    def add_message(self, sender, msg):
+        print("add msg")
 
-        #Apply CSS
-        style_provider = Gtk.CssProvider()
-        style_provider.load_from_resource("/org/gnome/Cablegram/chat.css")
+        if len(sender) > self.longest_name:
+            self.longest_name = len(sender)
 
-        Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(),
-            style_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
+        self.ctx.insert(self.ctx.get_end_iter(), sender.ljust(30-len(sender)) + "    " + msg+"\n")

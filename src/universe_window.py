@@ -25,7 +25,7 @@ from .gi_composites import GtkTemplate
 
 from .sidebar import SidebarChatItem
 from .universe import Universe
-from .chat_view import ChatView
+from .chat_view import *
 
 @GtkTemplate(ui='/org/gnome/Cablegram/universe.ui')
 class UniverseWindow(Gtk.ApplicationWindow):
@@ -33,10 +33,11 @@ class UniverseWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'UniverseWindow'
 
     sidebar_list = GtkTemplate.Child()
-    chat_container = GtkTemplate.Child()
+    chat_view = GtkTemplate.Child()
+    chat_view_buffer = GtkTemplate.Child()
 
+    cvm = None
     contacts = None
-    chat_view = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -56,8 +57,9 @@ class UniverseWindow(Gtk.ApplicationWindow):
         # Sidebar
         #
 
-        def sidebar_clicked(self, row):
+        def sidebar_clicked(a, row):
             print("sidebar clicked! index: "+str(row.get_index()))
+            self.cvm.add_message(row.first_name, "A sample message")
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 
@@ -117,8 +119,12 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
                     sidebarItem.contact_label.set_text(first+" "+last)
 
+                    sidebarItem.first_name = dialog["user"]["first_name"]
+                    sidebarItem.last_name = dialog["user"]["last_name"]
+
                 elif dialog["type"] == "chat":
                     sidebarItem.contact_label.set_text(dialog["chat"]["title"])
+                    sidebarItem.chat_name = dialog["chat"]["title"]
 
                 try:
                     if dialog["from"] == "you":
@@ -140,6 +146,5 @@ class UniverseWindow(Gtk.ApplicationWindow):
         # Chat View
         #
 
-        self.chat_view = Gtk.TextView()
-        self.chat_view.get_buffer().set_text("testing")
-        self.chat_container.add_with_viewport(self.chat_view)
+        self.cvm = chat_view_manager(self.chat_view.get_buffer())
+        self.cvm.add_message("Me", "A sample message")
