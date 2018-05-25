@@ -105,6 +105,7 @@
                     <property name="wrap_mode">word</property>
                     <property name="indent">10</property>
                     <property name="cursor_visible">False</property>
+                    <property name="monospace">True</property>
                   </object>
                 </child>
               </object>

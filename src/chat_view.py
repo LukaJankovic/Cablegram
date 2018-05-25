@@ -29,4 +29,6 @@ class chat_view_manager:
         if len(sender) > self.longest_name:
             self.longest_name = len(sender)
 
-        self.ctx.insert(self.ctx.get_end_iter(), "{:<7}{:}")
+        formatted_msg = "{:<15s}{:>15s}\n".format(sender, msg)
+
+        self.ctx.insert(self.ctx.get_end_iter(), formatted_msg)
