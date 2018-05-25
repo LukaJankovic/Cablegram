@@ -117,7 +117,7 @@ class Universe(Singleton):
 
                     return_item["message"] = current_message
 
-                    if current_message["from_id"] == current_user["id"]:
+                    if current_message["from_id"] == current_chat["id"]:
                         return_item["from"] = "you"
 
                     else:

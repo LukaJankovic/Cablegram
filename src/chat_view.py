@@ -29,4 +29,4 @@ class chat_view_manager:
         if len(sender) > self.longest_name:
             self.longest_name = len(sender)
 
-        self.ctx.insert(self.ctx.get_end_iter(), sender.ljust(30-len(sender)) + "    " + msg+"\n")
+        self.ctx.insert(self.ctx.get_end_iter(), "{:<7}{:}")

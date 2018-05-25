@@ -1,6 +1,6 @@
 {
     "app-id" : "org.gnome.Cablegram",
-    "runtime" : "org.gnome.Sdk",
+    "runtime" : "org.gnome.Platform",
     "runtime-version" : "3.28",
     "sdk" : "org.gnome.Sdk",
     "command" : "cablegram",
