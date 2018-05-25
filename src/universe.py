@@ -155,3 +155,21 @@ class Universe(Singleton):
         except pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid as error:
             #Invalid phone code
             return error
+
+    def get_history(self, user_id):
+        try:
+            history = self.app.get_history(user_id)
+            return history
+        except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
+            #Flood error
+            return error
+        except pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid as error:
+            #Invalid number
+            return error
+        except pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid as error:
+            #Invalid API
+            #TODO: Pyrogram goes crazy here so uh don't enter the wrong api key please
+            return error
+        except pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid as error:
+            #Invalid phone code
+            return error 

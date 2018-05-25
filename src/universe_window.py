@@ -58,7 +58,8 @@ class UniverseWindow(Gtk.ApplicationWindow):
         #
 
         def sidebar_clicked(a, row):
-            print("sidebar clicked! index: "+str(row.get_index()))
+            history = Universe.instance().get_history(self.contacts[row.get_index()]["user"]["id"])
+            print(history)
             self.cvm.add_message(row.first_name, "A sample message")
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
