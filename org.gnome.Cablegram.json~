@@ -120,8 +120,8 @@
             "sources" : [
                 {
                     "type" : "archive",
-                    "url" : "https://files.pythonhosted.org/packages/c5/32/ad6e5a38b5ef710ffbd38d97009132d36d8835beac06498e09d4bc3cfe47/Pyrogram-0.7.1.tar.gz",
-                    "sha256" : "cca5d12ef0174a10fb7053e81e98c5058df42e557e4311df1113a64bda516e1e"
+                    "url" : "https://github.com/pyrogram/pyrogram/archive/v0.7.4.tar.gz",
+                    "sha256" : "cad5b53ad3ce6750688782fb402dbd627a2022a0e9e11d510663bccd4baa2475"
                 }
             ]
         },
