@@ -32,8 +32,13 @@ class chat_view_manager:
 
     def setup_tags(self):
 
-        self.name_tag = self.ctx.create_tag("name", weight=Pango.Weight.BOLD, left_margin=5, left_margin_set=True)
-        self.msg_tag = self.ctx.create_tag("msg")
+        try:
+            self.name_tag = self.ctx.create_tag("name", weight=Pango.Weight.BOLD, left_margin=5, left_margin_set=True)
+            self.msg_tag = self.ctx.create_tag("msg")
+
+        except TypeError as e:
+            print("error inserting message: ")
+            print(e)
 
     def setup_indent(self, text_view):
 
