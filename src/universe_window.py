@@ -64,11 +64,14 @@ class UniverseWindow(Gtk.ApplicationWindow):
             history = Universe.instance().get_history(self.contacts[row.get_index()]["user"]["id"])
             #print(history)
 
+            self.cvm.messages_list = []
+
             for msg in history["messages"]:
                 if hasattr(msg, 'text'):
                     self.cvm.add_message(msg["from_user"]["first_name"], msg["text"])
 
             self.cvm.setup_indent(self.chat_view)
+            self.cvm.draw_messages(self.chat_view)
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 

@@ -25,6 +25,8 @@ class chat_view_manager:
     name_tag = None
     msg_tag = None
 
+    messages_list = []
+
     def __init__(self, ctx):
         self.ctx = ctx
 
@@ -32,13 +34,9 @@ class chat_view_manager:
 
     def setup_tags(self):
 
-        try:
-            self.name_tag = self.ctx.create_tag("name", weight=Pango.Weight.BOLD, left_margin=5, left_margin_set=True)
-            self.msg_tag = self.ctx.create_tag("msg")
-
-        except TypeError as e:
-            print("error inserting message: ")
-            print(e)
+        #self.name_tag = self.ctx.create_tag("name", weight=Pango.Weight.BOLD, left_margin=5, left_margin_set=True)
+        self.name_tag = self.ctx.create_tag("name", weight=Pango.Weight.BOLD)
+        self.msg_tag = self.ctx.create_tag("msg")
 
     def setup_indent(self, text_view):
 
@@ -51,17 +49,66 @@ class chat_view_manager:
         char_width = max(metrics.get_approximate_char_width(), metrics.get_approximate_digit_width())
         pixel_width = Pango.units_to_double(char_width)
 
+        print(self.longest_name)
+        print(pixel_width)
+
         tabs = Pango.TabArray(1, True)
-        tabs.set_tab(0, Pango.TabAlign.LEFT, self.longest_name * pixel_width + 50)
-        text_view.tabs = tabs
+        tabs.set_tab(0, Pango.TabAlign.LEFT, self.longest_name * pixel_width + 3)
+        text_view.set_tabs(tabs)
 
     def clear(self):
         self.ctx.set_text("")
 
-    def add_message(self, sender, msg):
-        if len(sender) > self.longest_name:
-            self.longest_name = len(sender)
+    def draw_messages(self, text_view):
 
-        self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t", self.name_tag)
-        self.ctx.insert_with_tags(self.ctx.get_end_iter(), msg, self.msg_tag)
-        self.ctx.insert(self.ctx.get_end_iter(), "\n")
+        self.setup_indent(text_view)
+        self.clear()
+
+        ctx = text_view.get_pango_context()
+        metrics = ctx.get_metrics(None, None)
+        char_width = max(metrics.get_approximate_char_width(), metrics.get_approximate_digit_width())
+        pixel_width = Pango.units_to_double(char_width)
+
+        tv_w = text_view.get_allocated_width()
+        cpl = int(tv_w / pixel_width)
+
+        for item in self.messages_list:
+
+            sender = item["sender"]
+            msg = item["msg"]
+
+            if (len(msg)+(self.longest_name+4)) < cpl:
+                self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t", self.name_tag)
+                self.ctx.insert_with_tags(self.ctx.get_end_iter(), msg, self.msg_tag)
+
+            else:
+                nmsg = list(msg)
+
+                lb = False
+                pos = int(cpl-(self.longest_name+4))
+
+                while lb == False:
+                    if msg[pos] == " ":
+                        nmsg[int(pos)] = " \n\t"
+                        lb = True
+                    pos = pos-1
+
+                print(msg)
+                print("-")
+
+                msg = "".join(nmsg)
+                self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t", self.name_tag)
+                self.ctx.insert_with_tags(self.ctx.get_end_iter(), msg, self.msg_tag)
+
+            self.ctx.insert(self.ctx.get_end_iter(), "\n")
+
+    def add_message(self, sender, msg):
+
+        self.messages_list.append({"sender":sender, "msg":msg})
+
+        try:
+            if len(sender) > self.longest_name:
+                self.longest_name = len(sender)
+        except TypeError as e:
+            print("error inserting message: ")
+            print(e)
