@@ -37,9 +37,17 @@ class chat_view_manager:
 
     def setup_indent(self, text_view):
 
+        text_view.tabs = None
+
         #TODO: Make customizable
+
+        ctx = text_view.get_pango_context()
+        metrics = ctx.get_metrics(None, None)
+        char_width = max(metrics.get_approximate_char_width(), metrics.get_approximate_digit_width())
+        pixel_width = Pango.units_to_double(char_width)
+
         tabs = Pango.TabArray(1, True)
-        tabs.set_tab(0, Pango.TabAlign.LEFT, 50)
+        tabs.set_tab(0, Pango.TabAlign.LEFT, self.longest_name * pixel_width + 50)
         text_view.tabs = tabs
 
     def clear(self):
@@ -49,6 +57,6 @@ class chat_view_manager:
         if len(sender) > self.longest_name:
             self.longest_name = len(sender)
 
-        self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender, self.name_tag)
-        self.ctx.insert_with_tags(self.ctx.get_end_iter(), "\t"+msg, self.msg_tag)
+        self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t", self.name_tag)
+        self.ctx.insert_with_tags(self.ctx.get_end_iter(), msg, self.msg_tag)
         self.ctx.insert(self.ctx.get_end_iter(), "\n")

@@ -5,3 +5,7 @@
 .sidebar_listbox > row {
   margin-bottom: 7px;
 }
+
+.chat_view {
+  font-size: 16px;
+}

@@ -101,10 +101,12 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="vexpand">True</property>
-                    <property name="editable">False</property>
                     <property name="wrap_mode">word</property>
-                    <property name="indent">10</property>
-                    <property name="cursor_visible">False</property>
+                    <property name="indent">50</property>
+                    <property name="monospace">True</property>
+                    <style>
+                      <class name="chat_view"/>
+                    </style>
                   </object>
                 </child>
               </object>
