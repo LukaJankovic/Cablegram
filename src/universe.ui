@@ -100,6 +100,7 @@
                     <property name="vexpand">True</property>
                     <property name="pixels_above_lines">5</property>
                     <property name="wrap_mode">word</property>
+                    <property name="left_margin">20</property>
                     <property name="monospace">True</property>
                     <style>
                       <class name="chat_view"/>

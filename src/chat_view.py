@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from gi.repository import Gtk, Gdk, GLib, GObject, Pango
+import math
 
 class chat_view_manager:
 
@@ -77,27 +78,36 @@ class chat_view_manager:
             sender = item["sender"]
             msg = item["msg"]
 
-            if (len(msg)+(self.longest_name+4)) < cpl:
-                self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t", self.name_tag)
+            if (len(msg)+(self.longest_name+6)) < cpl:
+                self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t   ", self.name_tag)
                 self.ctx.insert_with_tags(self.ctx.get_end_iter(), msg, self.msg_tag)
 
             else:
+
+                lbsn = int(math.ceil(((len(msg)+(self.longest_name+7))/cpl)))
                 nmsg = list(msg)
 
-                lb = False
-                pos = int(cpl-(self.longest_name+4))
+                print("MSG "+msg)
+                print(lbsn)
+                print(lbsn*int(cpl-(self.longest_name+7)))
+                print(str(len(msg)))
 
-                while lb == False:
-                    if msg[pos] == " ":
-                        nmsg[int(pos)] = " \n\t"
-                        lb = True
-                    pos = pos-1
+                if lbsn*int(cpl-(self.longest_name+7)) <= len(msg):
+                    lbsn = lbsn+1
 
-                print(msg)
-                print("-")
+                for i in range(lbsn):
+
+                    lb = False
+                    pos = i*int(cpl-(self.longest_name+7))
+
+                    while lb == False:
+                        if msg[pos] == " ":
+                            nmsg[int(pos)] = " \n\t   "
+                            lb = True
+                        pos = pos-1
 
                 msg = "".join(nmsg)
-                self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t", self.name_tag)
+                self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t   ", self.name_tag)
                 self.ctx.insert_with_tags(self.ctx.get_end_iter(), msg, self.msg_tag)
 
             self.ctx.insert(self.ctx.get_end_iter(), "\n")
