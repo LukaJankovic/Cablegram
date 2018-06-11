@@ -20,7 +20,6 @@ from gi.repository import Gtk, Gdk, GLib, GObject
 from .gi_composites import GtkTemplate
 
 from .universe import Universe
-from .universe_window import UniverseWindow
 
 from pathlib import Path
 

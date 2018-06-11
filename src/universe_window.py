@@ -23,6 +23,7 @@ import pyrogram
 from gi.repository import Gtk, Gdk, GLib, GObject
 from .gi_composites import GtkTemplate
 
+from .login import LoginWindow
 from .sidebar import SidebarChatItem
 from .universe import Universe
 from .chat_view import *
@@ -52,6 +53,18 @@ class UniverseWindow(Gtk.ApplicationWindow):
             style_provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
+
+        #Show Login if necessary
+        #if not Universe.instance().is_loggedin():
+        #    loginWin = LoginWindow(**kwargs)
+        #    loginWin.set_modal(True)
+        #    loginWin.set_transient_for(self)
+        #    loginWin.present()
+
+        #else:
+        #    self.start_main()
+
+    def start_main(self):
 
         #
         # Sidebar

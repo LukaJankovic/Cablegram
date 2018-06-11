@@ -26,7 +26,7 @@ import pyrogram
 from pathlib import Path
 
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio
+from gi.repository import Gtk, Gdk, Gio
 
 from .login import LoginWindow
 from .universe_window import UniverseWindow
@@ -47,63 +47,71 @@ class Application(Gtk.Application):
     def start_universe(self):
 
         #Show main window
-        print("Start main window")
         universe_window = UniverseWindow(application=self)
         universe_window.connect('show', self.hide_login)
+
+        if not Universe.instance().is_loggedin():
+            loginWin = LoginWindow(application=self)
+            loginWin.set_type_hint(Gdk.WindowTypeHint.DIALOG)
+            loginWin.set_modal(True)
+            loginWin.set_transient_for(universe_window)
+            loginWin.present()
+
         universe_window.present()
 
     def do_activate(self):
 
-        loggedin = False
         debug = False
 
         if debug:
             self.start_universe()
             loggedin = True
 
-        if os.path.isfile(str(Path.home()) + "/cablegram.session") and os.path.isfile(str(Path.home())+"/.config/cablegram.ini"):
-            loggedin = True
+        #if os.path.isfile(str(Path.home()) + "/cablegram.session") and os.path.isfile(str(Path.home())+"/.config/cablegram.ini"):
+        #    loggedin = True
 
-        if loggedin == False:
-            self.loginWin = LoginWindow(application=self)
-            self.loginWin.completion_callback = self.start_universe
-            self.loginWin.present()
+        self.start_universe()
 
-        elif debug == False:
-            config = configparser.ConfigParser()
-            config.read(str(Path.home())+"/.config/cablegram.ini")
-
-            error = Universe.instance().login(config.get("pyrogram", "api_id"), config.get("pyrogram", "api_hash"), config.get("pyrogram", "phone_number"), None)
-
-            if not error:
-                self.start_universe()
-            else:
-                def exit_dialog(widget, info):
-                    widget.destroy()
-                    os._exit(0)
-
-                dialog_message = None
-
-                if type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid:
-                    dialog_message = "Invalid phone number. Please try again."
-
-                elif type(error) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
-                    dialog_message = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds."
-
-                elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid:
-                    dialog_message = "Invalid API ID and / or API Hash."
-
-                elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid:
-                    dialog_message = "Invalid confirmation code."
-
-                def show_error():
-                    error_dialog = Gtk.MessageDialog(parent         = self,
-                                                     flags          = Gtk.DialogFlags.MODAL,
-                                                     type           = Gtk.MessageType.ERROR,
-                                                     buttons        = Gtk.ButtonsType.CLOSE,
-                                                     message_format = dialog_message)
-                    error_dialog.connect("response", exit_dialog)
-                    error_dialog.show()
+#        if loggedin == False:
+#            self.loginWin = LoginWindow(application=self)
+#            self.loginWin.completion_callback = self.start_universe
+#            self.loginWin.present()
+#
+#        elif debug == False:
+#            config = configparser.ConfigParser()
+#            config.read(str(Path.home())+"/.config/cablegram.ini")
+#
+#            error = Universe.instance().login(config.get("pyrogram", "api_id"), config.get("pyrogram", "api_hash"), config.get("pyrogram", "phone_number"), None)
+#
+#            if not error:
+#                self.start_universe()
+#            else:
+#                def exit_dialog(widget, info):
+#                    widget.destroy()
+#                    os._exit(0)
+#
+#                dialog_message = None
+#
+#                if type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid:
+#                    dialog_message = "Invalid phone number. Please try again."
+#
+#                elif type(error) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
+#                    dialog_message = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds."
+#
+#                elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid:
+#                    dialog_message = "Invalid API ID and / or API Hash."
+#
+#                elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid:
+#                    dialog_message = "Invalid confirmation code."
+#
+#                def show_error():
+#                    error_dialog = Gtk.MessageDialog(parent         = self,
+#                                                     flags          = Gtk.DialogFlags.MODAL,
+#                                                     type           = Gtk.MessageType.ERROR,
+#                                                     buttons        = Gtk.ButtonsType.CLOSE,
+#                                                     message_format = dialog_message)
+#                    error_dialog.connect("response", exit_dialog)
+#                    error_dialog.show()
 
 def main(version):
     app = Application()

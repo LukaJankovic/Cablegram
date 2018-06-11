@@ -19,6 +19,10 @@
 
 import pyrogram
 import threading
+import os
+import os.path
+
+from pathlib import Path
 
 from pyrogram.api import functions, types
 #from pyrogram import Client, Filters
@@ -37,12 +41,18 @@ class Singleton(object):
 
 class Universe(Singleton):
     app = None
+    loggedin = False
 
     def __init__(self):
         print("global init")
 
+    def is_loggedin(self):
+        if os.path.isfile(str(Path.home()) + "/cablegram.session") and os.path.isfile(str(Path.home())+"/.config/cablegram.ini"):
+            return True
+        else:
+            return False
+
     def login(self, api_id, api_hash, phone_nr, callback):
-        print("pyrogram login")
 
         try:
             self.app = pyrogram.Client("cablegram", api_id=api_id, api_hash=api_hash, phone_number=phone_nr, phone_code=callback)
