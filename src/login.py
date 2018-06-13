@@ -39,11 +39,11 @@ class LoginWindow(Gtk.Dialog):
     #api_page = GtkTemplate.Child()
     #phone_page = GtkTemplate.Child()
     #code_page = GtkTemplate.Child()
-    #api_id = GtkTemplate.Child()
-    #api_hash = GtkTemplate.Child()
+    api_id = GtkTemplate.Child()
+    api_hash = GtkTemplate.Child()
     #phone_entry = GtkTemplate.Child()
     #code_entry = GtkTemplate.Child()
-    #get_api_keys = GtkTemplate.Child()
+    get_api_keys = GtkTemplate.Child()
 
     completion_callback = None
 
@@ -108,17 +108,40 @@ class LoginWindow(Gtk.Dialog):
             elif page_name == "code":
                 print("done")
 
+        def open_url(sender):
+            webbrowser.open("https://my.telegram.org/apps")
+
+        def api_changed(bump):
+            if re.compile('[0-9]+').match(self.api_id.get_text()) and self.api_hash.get_text():
+                self.next_button.set_sensitive(True)
+            else:
+                self.next_button.set_sensitive(False)
+
         self.back_button.connect("clicked", back_clicked, self)
         self.next_button.connect("clicked", next_clicked, self)
+        self.get_api_keys.connect("clicked", open_url)
+        self.api_id.connect("changed", api_changed)
+        self.api_hash.connect("changed", api_changed)
 
         self.prepare_page(self.login_stack.get_visible_child_name())
 
     def prepare_page(self, page):
+
+        #Fix buttons
         if page == "intro":
             self.back_button.set_label("Quit")
+            self.next_button.set_sensitive(True)
 
         else:
             self.back_button.set_label("Back")
+
+        # Other setup
+        if page == "api":
+            if re.compile('[0-9]+').match(self.api_id.get_text()) and self.api_hash.get_text():
+                self.next_button.set_sensitive(True)
+            else:
+                self.next_button.set_sensitive(False)
+
 
     def a__init__(self, **kwargs):
         super().__init__(**kwargs)
