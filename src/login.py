@@ -41,7 +41,7 @@ class LoginWindow(Gtk.Dialog):
     #code_page = GtkTemplate.Child()
     api_id = GtkTemplate.Child()
     api_hash = GtkTemplate.Child()
-    #phone_entry = GtkTemplate.Child()
+    phone_entry = GtkTemplate.Child()
     #code_entry = GtkTemplate.Child()
     get_api_keys = GtkTemplate.Child()
 
@@ -111,8 +111,14 @@ class LoginWindow(Gtk.Dialog):
         def open_url(sender):
             webbrowser.open("https://my.telegram.org/apps")
 
-        def api_changed(bump):
+        def api_changed(sender):
             if re.compile('[0-9]+').match(self.api_id.get_text()) and self.api_hash.get_text():
+                self.next_button.set_sensitive(True)
+            else:
+                self.next_button.set_sensitive(False)
+
+        def phone_changed(sender):
+            if re.compile('\+[0-9]+').match(self.phone_entry.get_text()):
                 self.next_button.set_sensitive(True)
             else:
                 self.next_button.set_sensitive(False)
@@ -122,6 +128,7 @@ class LoginWindow(Gtk.Dialog):
         self.get_api_keys.connect("clicked", open_url)
         self.api_id.connect("changed", api_changed)
         self.api_hash.connect("changed", api_changed)
+        self.phone_entry.connect("changed", phone_changed)
 
         self.prepare_page(self.login_stack.get_visible_child_name())
 
@@ -142,6 +149,11 @@ class LoginWindow(Gtk.Dialog):
             else:
                 self.next_button.set_sensitive(False)
 
+        elif page == "phone":
+            if re.compile('\+[0-9]+').match(self.phone_entry.get_text()):
+                self.next_button.set_sensitive(True)
+            else:
+                self.next_button.set_sensitive(False)
 
     def a__init__(self, **kwargs):
         super().__init__(**kwargs)

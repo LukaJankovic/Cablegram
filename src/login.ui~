@@ -121,6 +121,8 @@
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="margin_left">12</property>
+                            <property name="margin_right">12</property>
                             <property name="margin_top">12</property>
                             <property name="margin_bottom">12</property>
                             <property name="column_spacing">32</property>
@@ -141,6 +143,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="hexpand">True</property>
+                                <property name="activates_default">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -162,6 +165,8 @@
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
+                            <property name="margin_left">12</property>
+                            <property name="margin_right">12</property>
                             <property name="margin_top">12</property>
                             <property name="margin_bottom">12</property>
                             <property name="column_spacing">32</property>
@@ -258,6 +263,8 @@
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="margin_left">12</property>
+                        <property name="margin_right">12</property>
                         <property name="margin_top">12</property>
                         <property name="margin_bottom">12</property>
                         <property name="column_spacing">32</property>
@@ -277,7 +284,8 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="hexpand">True</property>
-                            <property name="input_purpose">phone</property>
+                            <property name="activates_default">True</property>
+                            <property name="input_purpose">name</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
@@ -313,6 +321,8 @@
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="margin_left">12</property>
+                        <property name="margin_right">12</property>
                         <property name="margin_top">12</property>
                         <property name="margin_bottom">12</property>
                         <property name="column_spacing">32</property>
