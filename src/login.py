@@ -51,6 +51,13 @@ class LoginWindow(Gtk.Dialog):
     next_button = GtkTemplate.Child()
     login_stack = GtkTemplate.Child()
 
+    intro_page = GtkTemplate.Child()
+    api_page = GtkTemplate.Child()
+    phone_page = GtkTemplate.Child()
+    code_page = GtkTemplate.Child()
+
+    pages = []
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
@@ -65,12 +72,44 @@ class LoginWindow(Gtk.Dialog):
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
+        self.pages = [self.intro_page, self.api_page, self.phone_page, self.code_page]
+
         #Buttons / Connections
         def back_clicked(self, root):
+
+            page = root.login_stack.get_visible_child()
+
             if root.login_stack.get_visible_child_name() == "intro":
                 os._exit(0)
 
+            else:
+                root.login_stack.set_visible_child(root.pages[root.pages.index(page)-1])
+                root.prepare_page(root.login_stack.get_visible_child_name())
+
+        def next_clicked(self, root):
+
+            page = root.login_stack.get_visible_child()
+
+            # TODO Need to find a way to do page.name...
+            page_name = root.login_stack.get_visible_child_name()
+
+            if page_name == "intro":
+                root.login_stack.set_visible_child(root.api_page)
+                root.prepare_page("api")
+
+            elif page_name == "api":
+                root.login_stack.set_visible_child(root.phone_page)
+                root.prepare_page("phone")
+
+            elif page_name == "phone":
+                root.login_stack.set_visible_child(root.code_page)
+                root.prepare_page("code")
+
+            elif page_name == "code":
+                print("done")
+
         self.back_button.connect("clicked", back_clicked, self)
+        self.next_button.connect("clicked", next_clicked, self)
 
         self.prepare_page(self.login_stack.get_visible_child_name())
 
