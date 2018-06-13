@@ -50,14 +50,13 @@ class Application(Gtk.Application):
         universe_window = UniverseWindow(application=self)
         universe_window.connect('show', self.hide_login)
 
+        universe_window.present()
+
         if not Universe.instance().is_loggedin():
-            loginWin = LoginWindow(application=self)
-            loginWin.set_type_hint(Gdk.WindowTypeHint.DIALOG)
+            loginWin = LoginWindow(application=self, use_header_bar=True)
             loginWin.set_modal(True)
             loginWin.set_transient_for(universe_window)
             loginWin.present()
-
-        universe_window.present()
 
     def do_activate(self):
 

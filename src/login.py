@@ -32,22 +32,56 @@ import re
 import pyrogram
 
 @GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
-class LoginWindow(Gtk.Assistant):
+class LoginWindow(Gtk.Dialog):
 
     __gtype_name__ = 'LoginWindow'
 
-    api_page = GtkTemplate.Child()
-    phone_page = GtkTemplate.Child()
-    code_page = GtkTemplate.Child()
-    api_id = GtkTemplate.Child()
-    api_hash = GtkTemplate.Child()
-    phone_entry = GtkTemplate.Child()
-    code_entry = GtkTemplate.Child()
-    get_api_keys = GtkTemplate.Child()
+    #api_page = GtkTemplate.Child()
+    #phone_page = GtkTemplate.Child()
+    #code_page = GtkTemplate.Child()
+    #api_id = GtkTemplate.Child()
+    #api_hash = GtkTemplate.Child()
+    #phone_entry = GtkTemplate.Child()
+    #code_entry = GtkTemplate.Child()
+    #get_api_keys = GtkTemplate.Child()
 
     completion_callback = None
 
+    back_button = GtkTemplate.Child()
+    next_button = GtkTemplate.Child()
+    login_stack = GtkTemplate.Child()
+
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.init_template()
+
+        #Apply CSS
+        style_provider = Gtk.CssProvider()
+        style_provider.load_from_resource("/org/gnome/Cablegram/login.css")
+
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(),
+            style_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+
+        #Buttons / Connections
+        def back_clicked(self, root):
+            if root.login_stack.get_visible_child_name() == "intro":
+                os._exit(0)
+
+        self.back_button.connect("clicked", back_clicked, self)
+
+        self.prepare_page(self.login_stack.get_visible_child_name())
+
+    def prepare_page(self, page):
+        if page == "intro":
+            self.back_button.set_label("Quit")
+
+        else:
+            self.back_button.set_label("Back")
+
+    def a__init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()
 
