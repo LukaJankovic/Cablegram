@@ -42,7 +42,7 @@ class LoginWindow(Gtk.Dialog):
     api_id = GtkTemplate.Child()
     api_hash = GtkTemplate.Child()
     phone_entry = GtkTemplate.Child()
-    #code_entry = GtkTemplate.Child()
+    code_entry = GtkTemplate.Child()
     get_api_keys = GtkTemplate.Child()
 
     completion_callback = None
@@ -56,7 +56,7 @@ class LoginWindow(Gtk.Dialog):
     phone_page = GtkTemplate.Child()
     code_page = GtkTemplate.Child()
 
-    pages = []
+    event = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -105,8 +105,70 @@ class LoginWindow(Gtk.Dialog):
                 root.login_stack.set_visible_child(root.code_page)
                 root.prepare_page("code")
 
+                root.event = threading.Event()
+                GObject.threads_init()
+
+                # Login...
+                def code_callback():
+
+                    def wait_for_code():
+                        root.event.wait()
+                        return root.code_entry.get_text()
+
+                    error = Universe.instance().login(root.api_id.get_text(), root.api_hash.get_text(), root.phone_entry.get_text(), wait_for_code)
+                    if error:
+
+                        def exit_dialog(widget, info, page_index):
+                            widget.destroy()
+                            #if not page_index == -1:
+                                #self.set_current_page(page_index)
+
+                        dialog_message = None
+                        return_to = 1
+
+                        if type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid:
+                            dialog_message = "Invalid phone number. Please try again."
+
+                        elif type(error) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
+                            dialog_message = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds."
+
+                        elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid:
+                            dialog_message = "Invalid API ID and / or API Hash."
+
+                        elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid:
+                            dialog_message = "Invalid confirmation code."
+                            return_to = -1
+
+                        def show_error():
+                            error_dialog = Gtk.MessageDialog(parent         = root,
+                                                             flags          = Gtk.DialogFlags.MODAL,
+                                                             type           = Gtk.MessageType.ERROR,
+                                                             buttons        = Gtk.ButtonsType.CLOSE,
+                                                             message_format = dialog_message)
+                            error_dialog.connect("response", exit_dialog, return_to)
+                            error_dialog.show()
+
+                        GLib.idle_add(show_error)
+                    else:
+                        #Apply ini
+                        config = configparser.ConfigParser()
+                        config.read(str(Path.home())+"/.config/cablegram.ini")
+
+                        if not config.has_section('pyrogram'):
+                            config.add_section('pyrogram')
+                        config.set("pyrogram", "api_id", root.api_id.get_text())
+                        config.set("pyrogram", "api_hash", root.api_hash.get_text())
+                        config.set("pyrogram", "phone_number", root.phone_entry.get_text())
+
+                        with open(str(Path.home())+"/.config/cablegram.ini", "w+") as config_file:
+                            config.write(config_file)
+
+                        print("done")
+
+                t = threading.Thread(target=code_callback)
+                t.start()
             elif page_name == "code":
-                print("done")
+               root.event.set()
 
         def open_url(sender):
             webbrowser.open("https://my.telegram.org/apps")
@@ -144,6 +206,23 @@ class LoginWindow(Gtk.Dialog):
 
         # Other setup
         if page == "api":
+
+            #Apply ini
+            config = configparser.ConfigParser()
+            config.read(str(Path.home())+"/.config/cablegram.ini")
+
+            try:
+                if config.get("pyrogram", "api_id"):
+                    self.api_id.set_text(config.get("pyrogram", "api_id"))
+            except configparser.NoSectionError:
+                print("api_id empty")
+
+            try:
+                if config.get("pyrogram", "api_hash"):
+                    self.api_hash.set_text(config.get("pyrogram", "api_hash"))
+            except configparser.NoSectionError:
+                print("api_hash empty")
+
             if re.compile('[0-9]+').match(self.api_id.get_text()) and self.api_hash.get_text():
                 self.next_button.set_sensitive(True)
             else:
@@ -194,7 +273,6 @@ class LoginWindow(Gtk.Dialog):
 
         event = threading.Event()
         GObject.threads_init()
-
         def code_callback():
 
             def wait_for_code():
