@@ -34,37 +34,13 @@
     ],
     "modules" : [
         {
-            "name" : "cpython",
-            "sources" : [
-                {
-                    "type" : "archive",
-                    "url" : "https://www.python.org/ftp/python/3.6.0/Python-3.6.0.tar.xz",
-                    "sha256" : "b0c5f904f685e32d9232f7bdcbece9819a892929063b6e385414ad2dd6a23622"
-                }
-            ]
-        },
-        {
-            "name" : "setuptools",
-            "buildsystem" : "simple",
-            "build-commands" : [
-                "python3 ./bootstrap.py; python3 setup.py install --prefix=/app"
-            ],
-            "sources" : [
-                {
-                    "type" : "archive",
-                    "url" : "https://github.com/pypa/setuptools/archive/v39.0.1.tar.gz",
-                    "sha256" : "0f0e9982e768b4d42764c17e157790c8039b9c76bd9df195b2df103dce1b5283"
-                }
-            ]
-        },
-        {
             "name" : "pysocks",
             "buildsystem" : "simple",
             "ensure-writable" : [
                 "easy-install.pth"
             ],
             "build-commands" : [
-                "python3.5 setup.py install --prefix=/app"
+                "python3 setup.py install --prefix=/app"
             ],
             "sources" : [
                 {
@@ -81,7 +57,7 @@
                 "easy-install.pth"
             ],
             "build-commands" : [
-                "python3.5 setup.py install --prefix=/app"
+                "python3 setup.py install --prefix=/app"
             ],
             "sources" : [
                 {
@@ -98,7 +74,7 @@
                 "easy-install.pth"
             ],
             "build-commands" : [
-                "python3.5 setup.py install --prefix=/app"
+                "python3 setup.py install --prefix=/app"
             ],
             "sources" : [
                 {
@@ -115,7 +91,7 @@
                 "easy-install.pth"
             ],
             "build-commands" : [
-                "python3.5 setup.py install --prefix=/app"
+                "python3 setup.py install --prefix=/app"
             ],
             "sources" : [
                 {

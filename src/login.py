@@ -74,6 +74,12 @@ class LoginWindow(Gtk.Dialog):
 
         self.pages = [self.intro_page, self.api_page, self.phone_page, self.code_page]
 
+        #Close app when ESC key pressed
+        def empty(self):
+            os._exit(0)
+
+        self.connect("close", empty)
+
         #Buttons / Connections
         def back_clicked(self, root):
 
@@ -163,7 +169,7 @@ class LoginWindow(Gtk.Dialog):
                         with open(str(Path.home())+"/.config/cablegram.ini", "w+") as config_file:
                             config.write(config_file)
 
-                        print("done")
+                        self.destroy()
 
                 t = threading.Thread(target=code_callback)
                 t.start()
@@ -233,135 +239,3 @@ class LoginWindow(Gtk.Dialog):
                 self.next_button.set_sensitive(True)
             else:
                 self.next_button.set_sensitive(False)
-
-    def a__init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.init_template()
-
-        #Apply CSS
-        style_provider = Gtk.CssProvider()
-        style_provider.load_from_resource("/org/gnome/Cablegram/login.css")
-
-        Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(),
-            style_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
-
-        #Connections
-        def exit_app(bump):
-            os._exit(0)
-
-        def api_changed(bump):
-            if re.compile('[0-9]+').match(self.api_id.get_text()) and self.api_hash.get_text():
-                self.set_page_complete(self.api_page, True)
-            else:
-                self.set_page_complete(self.api_page, False)
-
-        def phone_changed(bump):
-            if re.compile('\+[0-9]+').match(self.phone_entry.get_text()):
-                self.set_page_complete(self.phone_page, True)
-            else:
-                self.set_page_complete(self.phone_page, False)
-
-        def code_changed(bump):
-            if self.code_entry.get_text():
-                self.set_page_complete(self.code_page, True)
-
-        def open_url(bump):
-            webbrowser.open("https://my.telegram.org/apps")
-
-        event = threading.Event()
-        GObject.threads_init()
-        def code_callback():
-
-            def wait_for_code():
-                event.wait()
-                return self.code_entry.get_text()
-
-            error = Universe.instance().login(self.api_id.get_text(), self.api_hash.get_text(), self.phone_entry.get_text(), wait_for_code)
-            if error:
-
-                def exit_dialog(widget, info, page_index):
-                    widget.destroy()
-                    if not page_index == -1:
-                        self.set_current_page(page_index)
-
-                dialog_message = None
-                return_to = 1
-
-                if type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneNumberInvalid:
-                    dialog_message = "Invalid phone number. Please try again."
-
-                elif type(error) is pyrogram.api.errors.exceptions.flood_420.FloodWait:
-                    dialog_message = "You're trying to log in too often. Try again in "+ str(error.x) +" seconds."
-
-                elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.ApiIdInvalid:
-                    dialog_message = "Invalid API ID and / or API Hash."
-
-                elif type(error) is pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid:
-                    dialog_message = "Invalid confirmation code."
-                    return_to = -1
-
-                def show_error():
-                    error_dialog = Gtk.MessageDialog(parent         = self,
-                                                     flags          = Gtk.DialogFlags.MODAL,
-                                                     type           = Gtk.MessageType.ERROR,
-                                                     buttons        = Gtk.ButtonsType.CLOSE,
-                                                     message_format = dialog_message)
-                    error_dialog.connect("response", exit_dialog, return_to)
-                    error_dialog.show()
-
-                GLib.idle_add(show_error)
-            else:
-                #Apply ini
-                config = configparser.ConfigParser()
-                config.read(str(Path.home())+"/.config/cablegram.ini")
-
-                if not config.has_section('pyrogram'):
-                    config.add_section('pyrogram')
-                config.set("pyrogram", "api_id", self.api_id.get_text())
-                config.set("pyrogram", "api_hash", self.api_hash.get_text())
-                config.set("pyrogram", "phone_number", self.phone_entry.get_text())
-
-                with open(str(Path.home())+"/.config/cablegram.ini", "w+") as config_file:
-                    config.write(config_file)
-
-                if self.completion_callback:
-                    #TODO: This closes the f****** app.
-                    self.completion_callback()
-
-        def assistant_prepare(info1, info2):
-            if info2 == self.code_page:
-                t = threading.Thread(target=code_callback)
-                t.start()
-            #if info2 == self.phone_page:
-            #    if self.completion_callback:
-            #        self.completion_callback()
-
-        def assistant_apply(info):
-            event.set()
-
-        self.connect("cancel", exit_app)
-        self.connect("prepare", assistant_prepare)
-        self.connect("apply", assistant_apply)
-        self.api_id.connect("changed", api_changed)
-        self.api_hash.connect("changed", api_changed)
-        self.phone_entry.connect("changed", phone_changed)
-        self.code_entry.connect("changed", code_changed)
-        self.get_api_keys.connect("clicked", open_url)
-
-        #Apply ini
-        config = configparser.ConfigParser()
-        config.read(str(Path.home())+"/.config/cablegram.ini")
-
-        try:
-            if config.get("pyrogram", "api_id"):
-                self.api_id.set_text(config.get("pyrogram", "api_id"))
-        except configparser.NoSectionError:
-            print("api_id empty")
-        try:
-            if config.get("pyrogram", "api_hash"):
-                self.api_hash.set_text(config.get("pyrogram", "api_hash"))
-        except configparser.NoSectionError:
-            print("api_hash empty")
