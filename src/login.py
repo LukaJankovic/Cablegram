@@ -169,7 +169,8 @@ class LoginWindow(Gtk.Dialog):
                         with open(str(Path.home())+"/.config/cablegram.ini", "w+") as config_file:
                             config.write(config_file)
 
-                        self.destroy()
+                        root.close()
+                        root.destroy()
 
                 t = threading.Thread(target=code_callback)
                 t.start()
@@ -205,10 +206,17 @@ class LoginWindow(Gtk.Dialog):
         #Fix buttons
         if page == "intro":
             self.back_button.set_label("Quit")
+            self.back_button.set_label("Next")
+            self.next_button.set_sensitive(True)
+
+        elif page == "code":
+            self.back_button.set_label("Back")
+            self.next_button.set_label("Finish")
             self.next_button.set_sensitive(True)
 
         else:
             self.back_button.set_label("Back")
+            self.back_button.set_label("Next")
 
         # Other setup
         if page == "api":
