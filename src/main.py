@@ -60,6 +60,7 @@ class Application(Gtk.Application):
 
             if not error:
                 universe_window.present()
+                universe_window.start_main()
             else:
                 def exit_dialog(widget, info):
                     widget.destroy()

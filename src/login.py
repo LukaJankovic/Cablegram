@@ -169,6 +169,9 @@ class LoginWindow(Gtk.Dialog):
                         with open(str(Path.home())+"/.config/cablegram.ini", "w+") as config_file:
                             config.write(config_file)
 
+                        universe_window = root.get_transient_for()
+                        universe_window.start_main()
+
                         root.close()
                         root.destroy()
 
