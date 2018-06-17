@@ -57,6 +57,7 @@ class LoginWindow(Gtk.Dialog):
     code_page = GtkTemplate.Child()
 
     event = None
+    done = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -76,7 +77,8 @@ class LoginWindow(Gtk.Dialog):
 
         #Close app when ESC key pressed
         def empty(self):
-            os._exit(0)
+            if not self.done:
+                os._exit(0)
 
         self.connect("close", empty)
 
@@ -172,6 +174,7 @@ class LoginWindow(Gtk.Dialog):
                         universe_window = root.get_transient_for()
                         universe_window.start_main()
 
+                        root.done = True
                         root.close()
                         root.destroy()
 
