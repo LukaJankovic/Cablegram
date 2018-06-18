@@ -9,6 +9,8 @@ conf.set('PYTHON', python3.find_python().path())
 conf.set('VERSION', meson.project_version())
 conf.set('localedir', join_paths(get_option('prefix'), get_option('localedir')))
 conf.set('pkgdatadir', pkgdatadir)
+#conf.set('pythondir', meson.source_root())
+#conf.set('pyexecdir', meson.source_root())
 
 configure_file(
   input: 'cablegram.in',
@@ -23,10 +25,17 @@ cablegram_sources = [
   'gi_composites.py',
   'main.py',
   'login.py',
-  'universe.py',
   'universe_window.py',
   'sidebar.py',
   'chat_view.py'
 ]
 
 install_data(cablegram_sources, install_dir: moduledir)
+
+wrapper_sources = [
+  'wrapper/__init__.py',
+  'wrapper/universe.py',
+  'wrapper/dialog.py'
+]
+
+install_data(wrapper_sources, install_dir: join_paths(moduledir, 'wrapper'))

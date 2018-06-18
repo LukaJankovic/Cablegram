@@ -25,8 +25,9 @@ from .gi_composites import GtkTemplate
 
 from .login import LoginWindow
 from .sidebar import SidebarChatItem
-from .universe import Universe
 from .chat_view import *
+
+from cablegram.wrapper.universe import Universe
 
 @GtkTemplate(ui='/org/gnome/Cablegram/ui/universe.ui')
 class UniverseWindow(Gtk.ApplicationWindow):

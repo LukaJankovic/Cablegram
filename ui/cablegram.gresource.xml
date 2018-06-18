@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/org/gnome/Cablegram">
+  <gresource prefix="/org/gnome/Cablegram/ui">
     <file>login.ui</file>
     <file>universe.ui</file>
     <file>sidebar.ui</file>

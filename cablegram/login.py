@@ -19,7 +19,7 @@
 from gi.repository import Gtk, Gdk, GLib, GObject
 from .gi_composites import GtkTemplate
 
-from .universe import Universe
+from cablegram.wrapper.universe import Universe
 
 from pathlib import Path
 

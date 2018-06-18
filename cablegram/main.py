@@ -30,7 +30,7 @@ from gi.repository import Gtk, Gdk, Gio
 
 from .login import LoginWindow
 from .universe_window import UniverseWindow
-from .universe import Universe
+from cablegram.wrapper.universe import Universe
 
 class Application(Gtk.Application):
 

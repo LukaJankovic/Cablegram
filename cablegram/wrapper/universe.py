@@ -27,6 +27,8 @@ from pathlib import Path
 from pyrogram.api import functions, types
 #from pyrogram import Client, Filters
 
+from .dialog import *
+
 class Singleton(object):
     __singleton_lock = threading.Lock()
     __singleton_instance = None
@@ -74,6 +76,9 @@ class Universe(Singleton):
             return error
 
     def get_dialogs(self):
+
+        dialog_test()
+
         try:
             dialogs = self.app.send(functions.messages.GetDialogs(offset_date=0, offset_id=0, offset_peer=types.InputPeerEmpty(), limit=0))
 

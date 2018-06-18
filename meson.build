@@ -5,7 +5,7 @@ project('cablegram',         version: '0.1.0',
 i18n = import('i18n')
 
 subdir('data')
-subdir('src')
+subdir('cablegram')
 subdir('po')
 subdir('ui')
 subdir('style')
