@@ -31,7 +31,7 @@ import re
 
 import pyrogram
 
-@GtkTemplate(ui='/org/gnome/Cablegram/login.ui')
+@GtkTemplate(ui='/org/gnome/Cablegram/ui/login.ui')
 class LoginWindow(Gtk.Dialog):
 
     __gtype_name__ = 'LoginWindow'
@@ -64,7 +64,7 @@ class LoginWindow(Gtk.Dialog):
 
         #Apply CSS
         style_provider = Gtk.CssProvider()
-        style_provider.load_from_resource("/org/gnome/Cablegram/login.css")
+        style_provider.load_from_resource("/org/gnome/Cablegram/style/login.css")
 
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(),

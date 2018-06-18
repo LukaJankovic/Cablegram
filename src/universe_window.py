@@ -28,14 +28,13 @@ from .sidebar import SidebarChatItem
 from .universe import Universe
 from .chat_view import *
 
-@GtkTemplate(ui='/org/gnome/Cablegram/universe.ui')
+@GtkTemplate(ui='/org/gnome/Cablegram/ui/universe.ui')
 class UniverseWindow(Gtk.ApplicationWindow):
 
     __gtype_name__ = 'UniverseWindow'
 
     sidebar_list = GtkTemplate.Child()
     chat_view = GtkTemplate.Child()
-    chat_view_buffer = GtkTemplate.Child()
 
     cvm = None
     contacts = None
@@ -46,7 +45,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         #Apply CSS
         style_provider = Gtk.CssProvider()
-        style_provider.load_from_resource("/org/gnome/Cablegram/universe.css")
+        style_provider.load_from_resource("/org/gnome/Cablegram/style/universe.css")
 
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(),

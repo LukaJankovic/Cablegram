@@ -7,5 +7,7 @@ i18n = import('i18n')
 subdir('data')
 subdir('src')
 subdir('po')
+subdir('ui')
+subdir('style')
 
 meson.add_install_script('build-aux/meson/postinstall.py')

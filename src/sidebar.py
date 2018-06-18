@@ -18,7 +18,7 @@
 from gi.repository import Gtk, Gdk, GLib, GObject
 from .gi_composites import GtkTemplate
 
-@GtkTemplate(ui='/org/gnome/Cablegram/sidebar.ui')
+@GtkTemplate(ui='/org/gnome/Cablegram/ui/sidebar.ui')
 class SidebarChatItem(Gtk.ListBoxRow):
 
     __gtype_name__ = 'SidebarChatItem'
