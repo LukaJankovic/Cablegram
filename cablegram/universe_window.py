@@ -155,6 +155,9 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     print("Item")
                     print(dialog["message"])
 
+                except KeyError:
+                    print("KeyError, will fix once support for channels is added")
+
                 self.sidebar_list.insert(sidebarItem, -1)
 
         #
