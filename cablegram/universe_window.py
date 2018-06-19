@@ -54,19 +54,6 @@ class UniverseWindow(Gtk.ApplicationWindow):
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
-        #if Universe.instance().is_loggedin():
-         #   self.start_main()
-
-        #Show Login if necessary
-        #if not Universe.instance().is_loggedin():
-        #    loginWin = LoginWindow(**kwargs)
-        #    loginWin.set_modal(True)
-        #    loginWin.set_transient_for(self)
-        #    loginWin.present()
-
-        #else:
-        #    self.start_main()
-
     def start_main(self):
 
         #
