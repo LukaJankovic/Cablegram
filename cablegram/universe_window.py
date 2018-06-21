@@ -64,7 +64,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
             self.cvm.clear()
 
-            history = Universe.instance().get_history(self.contacts[row.get_index()]["user"]["id"])
+            history = Universe.instance().get_history(self.contacts[row.get_index()].user["id"])
             #print(history)
 
             self.cvm.messages_list = []
@@ -121,42 +121,45 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
                 sidebarItem = SidebarChatItem()
 
-                if dialog["type"] == "user":
+                if dialog.dialog_type == "user":
 
-                    first = dialog["user"]["first_name"]
-                    last = dialog["user"]["last_name"]
+                    print("USER")
+                    print(dialog.user)
 
-                    if not dialog["user"]["first_name"]:
+                    first = dialog.user["first_name"]
+                    last = dialog.user["last_name"]
+
+                    if not dialog.user["first_name"]:
                         first = ""
 
-                    if not dialog["user"]["last_name"]:
+                    if not dialog.user["last_name"]:
                         last = ""
 
                     sidebarItem.contact_label.set_text(first+" "+last)
 
-                    sidebarItem.first_name = dialog["user"]["first_name"]
-                    sidebarItem.last_name = dialog["user"]["last_name"]
+                    sidebarItem.first_name = dialog.user["first_name"]
+                    sidebarItem.last_name = dialog.user["last_name"]
 
-                elif dialog["type"] == "chat":
-                    sidebarItem.contact_label.set_text(dialog["chat"]["title"])
-                    sidebarItem.chat_name = dialog["chat"]["title"]
+                elif dialog.dialog_type == "chat":
+                    sidebarItem.contact_label.set_text(dialog.chat["title"])
+                    sidebarItem.chat_name = dialog.chat["title"]
 
                 try:
-                    if dialog["from"] == "you":
-                        sidebarItem.chat_label.set_text("You: "+dialog["message"]["message"])
-                    elif dialog["type"] == "chat":
-                        sidebarItem.chat_label.set_text(dialog["chat_from"]["first_name"]+": "+dialog["message"]["message"])
+                    if dialog.from_user == "you":
+                        sidebarItem.chat_label.set_text("You: "+dialog.message["message"])
+                    elif dialog.dialog_type == "chat":
+                        sidebarItem.chat_label.set_text(dialog.from_user["first_name"]+": "+dialog.message["message"])
                     else:
-                        sidebarItem.chat_label.set_text(dialog["message"]["message"])
+                        sidebarItem.chat_label.set_text(dialog.message["message"])
                 except AttributeError as e:
                     print("Unexpected message")
                     print("Error:")
                     print(e)
                     print("Item")
-                    print(dialog["message"])
+                    print(dialog.message)
 
-                except KeyError:
-                    print("KeyError, will fix once support for channels is added")
+                except TypeError:
+                    print("TypeError, will fix once support for channels is added")
 
                 self.sidebar_list.insert(sidebarItem, -1)
 

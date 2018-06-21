@@ -18,6 +18,28 @@
 import pyrogram
 from pyrogram.api import functions, types
 
+class dialog_item():
+    dialog = None
+    user = None
+    chat = None
+    channel = None
+    dialog_type = None
+    message = None
+    from_user = None
+
+def create_dialog_item(dialog_type, message, from_user, dialog, user=None, chat=None, channel=None):
+    return_item = dialog_item()
+
+    return_item.dialog = dialog
+    return_item.user = user
+    return_item.chat = chat
+    return_item.channel = channel
+    return_item.dialog_type = dialog_type
+    return_item.message = message
+    return_item.from_user = from_user
+
+    return return_item
+
 def input_peer_from_chat(chat_peer):
     return types.InputPeerChat(chat_id=chat_peer["chat_id"])
 
@@ -60,21 +82,19 @@ def parse_dialogs(dialogs):
             if not current_user:
                 print("Something has gone terribly wrong...")
 
-            return_item = {"type":"user","user":current_user,"dialog":dialog,"chat":None,"channel":None}
-
             current_message = None
-
             for message in dialogs["messages"]:
                 if message["id"] == dialog["top_message"]:
                     current_message = message
 
-            return_item["message"] = current_message
-
+            from_user = ""
             if current_message["from_id"] == current_user["id"]:
-                return_item["from"] = "remote"
+                from_user = "remote"
 
             else:
-                return_item["from"] = "you"
+                from_user = "you"
+
+            return_item = create_dialog_item(dialog=dialog, user=current_user, dialog_type="user", message=current_message, from_user=from_user)
 
             new_dialogs.append(return_item)
 
@@ -87,31 +107,22 @@ def parse_dialogs(dialogs):
             if not current_chat:
                 print("Something has gone terribly wrong 2")
 
-            return_item = {"type":"chat","chat":current_chat,"dialog":dialog,"user":None,"channel":None}
-
             current_message = None
-
             for message in dialogs["messages"]:
                 if message["id"] == dialog["top_message"]:
                     current_message = message
-
-            return_item["message"] = current_message
-
+            from_user = ""
             if current_message["from_id"] == current_chat["id"]:
-                return_item["from"] = "you"
+                from_user = "you"
 
             else:
-                return_item["from"] = "remote"
-
                 sender = None
                 for user in dialogs["users"]:
                     if user["id"] == current_message["from_id"]:
                         sender = user
+                from_user = sender
 
-                print(sender)
-
-                return_item["chat_from"] = sender
-
+            return_item = create_dialog_item(dialog=dialog, chat=current_chat, dialog_type="chat", message=current_message, from_user=from_user)
             new_dialogs.append(return_item)
 
         elif type(dialog["peer"]) == types.PeerChannel:
@@ -123,14 +134,13 @@ def parse_dialogs(dialogs):
             if not current_channel:
                 print("if something wrong was so good why isn't there a something wrong 2?")
 
-            return_item = {"type":"channel","channel":current_channel,"dialog":dialog,"user":None,"chat":None}
+            return_item = create_dialog_item(dialog=dialog, channel=current_channel, dialog_type="channel", message=None, from_user="remote")
 
             #TODO: Add current msg
 
             new_dialogs.append(return_item)
 
         else:
-            #TODO: Other dialogs, i.e. channels
             print("Other type of dialog: ")
             print(dialog)
 
@@ -147,14 +157,14 @@ def fetch_dialogs(client):
 
         while total_dialogs % 20 == 0:
             latest_peer = None
-            latest_item = dialogs_complete[total_dialogs-1]["dialog"]["peer"]
+            latest_item = dialogs_complete[total_dialogs-1].dialog.peer
 
             if isinstance(latest_item, types.PeerUser):
                 a_hash = None
                 for msg in dialogs_complete:
                     try:
-                        if msg["user"]["id"] == latest_item["user_id"]:
-                            a_hash = msg["user"]["access_hash"]
+                        if msg.user["id"] == latest_item["user_id"]:
+                            a_hash = msg.user["access_hash"]
                     except TypeError:
                         # Just carry on...
                         pass
@@ -165,8 +175,8 @@ def fetch_dialogs(client):
                 a_hash = None
                 for msg in dialogs_complete["chats"]:
                     try:
-                        if msg["channel"]["id"] == latest_item["channel_id"]:
-                            a_hash = msg["channel"]["access_hash"]
+                        if msg.channel["id"] == latest_item["channel_id"]:
+                            a_hash = msg.channel["access_hash"]
                     except TypeError:
                         #Carry on...
                         pass
@@ -174,8 +184,8 @@ def fetch_dialogs(client):
             else:
                 print("something has gone horribly wrong: the pre-sequel")
 
-            latest_date = dialogs_complete[total_dialogs-1]["message"]["date"]
-            latest_id = dialogs_complete[total_dialogs-1]["message"]["id"]
+            latest_date = dialogs_complete[total_dialogs-1].message["date"]
+            latest_id = dialogs_complete[total_dialogs-1].message["id"]
 
             n_dialogs = download_dialogs_raw(client, latest_date, latest_id, latest_peer)
 
