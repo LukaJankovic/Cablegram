@@ -144,6 +144,10 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     sidebarItem.contact_label.set_text(dialog.chat["title"])
                     sidebarItem.chat_name = dialog.chat["title"]
 
+                elif dialog.dialog_type == "channel":
+                    sidebarItem.contact_label.set_text(dialog.from_user)
+                    sidebarItem.channel_name = dialog.from_user
+
                 try:
                     if dialog.from_user == "you":
                         sidebarItem.chat_label.set_text("You: "+dialog.message["message"])

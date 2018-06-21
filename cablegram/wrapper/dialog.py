@@ -111,6 +111,7 @@ def parse_dialogs(dialogs):
             for message in dialogs["messages"]:
                 if message["id"] == dialog["top_message"]:
                     current_message = message
+
             from_user = ""
             if current_message["from_id"] == current_chat["id"]:
                 from_user = "you"
@@ -134,7 +135,15 @@ def parse_dialogs(dialogs):
             if not current_channel:
                 print("if something wrong was so good why isn't there a something wrong 2?")
 
-            return_item = create_dialog_item(dialog=dialog, channel=current_channel, dialog_type="channel", message=None, from_user="remote")
+            current_message = None
+            for message in dialogs["messages"]:
+                if message["id"] == dialog["top_message"]:
+                    current_message = message
+
+            if not current_message:
+                print("despacito error")
+
+            return_item = create_dialog_item(dialog=dialog, channel=current_channel, dialog_type="channel", message=message, from_user=current_channel["title"])
 
             #TODO: Add current msg
 
