@@ -123,9 +123,6 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
                 if dialog.dialog_type == "user":
 
-                    print("USER")
-                    print(dialog.user)
-
                     first = dialog.user["first_name"]
                     last = dialog.user["last_name"]
 
@@ -161,9 +158,6 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     print(e)
                     print("Item")
                     print(dialog.message)
-
-                except TypeError:
-                    print("TypeError, will fix once support for channels is added")
 
                 self.sidebar_list.insert(sidebarItem, -1)
 
