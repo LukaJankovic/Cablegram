@@ -64,7 +64,16 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
             self.cvm.clear()
 
-            history = Universe.instance().get_history(self.contacts[row.get_index()].user["id"])
+            dialog_item = self.contacts[row.get_index()]
+            history = None
+
+            if dialog_item.dialog_type == "user":
+                history = Universe.instance().get_history(dialog_item.user["id"])
+            elif dialog_item.dialog_type == "chat":
+                history = Universe.instance().get_history(dialog_item.chat["id"])
+            # TODO: Add channel support
+            #else:
+                #history = Universe.instance().get_history(dialog_item.channel["id"])
             #print(history)
 
             self.cvm.messages_list = []
