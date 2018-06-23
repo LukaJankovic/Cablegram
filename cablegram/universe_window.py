@@ -146,10 +146,14 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     sidebarItem.channel_name = dialog.from_user
 
                 try:
-                    if dialog.from_user == "you":
-                        sidebarItem.chat_label.set_text("You: "+dialog.message["message"])
+                    if dialog.dialog_type == "user" and dialog.from_user == "you":
+                        if dialog.from_user == "you":
+                            sidebarItem.chat_label.set_text("You: "+dialog.message["message"])
                     elif dialog.dialog_type == "chat":
-                        sidebarItem.chat_label.set_text(dialog.from_user["first_name"]+": "+dialog.message["message"])
+                        if dialog.from_user["id"] == Universe.instance().me["id"]:
+                            sidebarItem.chat_label.set_text("You: "+dialog.message["message"])
+                        else:
+                            sidebarItem.chat_label.set_text(dialog.from_user["first_name"]+": "+dialog.message["message"])
                     else:
                         sidebarItem.chat_label.set_text(dialog.message["message"])
                 except AttributeError as e:

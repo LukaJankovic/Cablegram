@@ -43,6 +43,7 @@ class Singleton(object):
 
 class Universe(Singleton):
     app = None
+    me = None
     loggedin = False
 
     def __init__(self):
@@ -59,6 +60,8 @@ class Universe(Singleton):
         try:
             self.app = pyrogram.Client("cablegram", api_id=api_id, api_hash=api_hash, phone_number=phone_nr, phone_code=callback)
             self.app.start()
+
+            self.me = self.app.get_me()
 
             return None
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:

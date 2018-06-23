@@ -113,15 +113,9 @@ def parse_dialogs(dialogs):
                     current_message = message
 
             from_user = ""
-            if current_message["from_id"] == current_chat["id"]:
-                from_user = "you"
-
-            else:
-                sender = None
-                for user in dialogs["users"]:
-                    if user["id"] == current_message["from_id"]:
-                        sender = user
-                from_user = sender
+            for user in dialogs["users"]:
+                if user["id"] == current_message["from_id"]:
+                    from_user = user
 
             return_item = create_dialog_item(dialog=dialog, chat=current_chat, dialog_type="chat", message=current_message, from_user=from_user)
             new_dialogs.append(return_item)
@@ -144,9 +138,6 @@ def parse_dialogs(dialogs):
                 print("despacito error")
 
             return_item = create_dialog_item(dialog=dialog, channel=current_channel, dialog_type="channel", message=message, from_user=current_channel["title"])
-
-            #TODO: Add current msg
-
             new_dialogs.append(return_item)
 
         else:
