@@ -26,7 +26,7 @@ class chat_view_manager:
     name_tag = None
     msg_tag = None
 
-    messages_list = []
+    messages_list = None
 
     def __init__(self, ctx):
         self.ctx = ctx
@@ -50,8 +50,8 @@ class chat_view_manager:
         char_width = max(metrics.get_approximate_char_width(), metrics.get_approximate_digit_width())
         pixel_width = Pango.units_to_double(char_width)
 
+        print("LONGEST NAME")
         print(self.longest_name)
-        print(pixel_width)
 
         tabs = Pango.TabArray(1, True)
         tabs.set_tab(0, Pango.TabAlign.LEFT, self.longest_name * pixel_width + 3)
@@ -61,6 +61,9 @@ class chat_view_manager:
         self.ctx.set_text("")
 
     def draw_messages(self, text_view):
+
+        if not self.messages_list:
+            return
 
         self.setup_indent(text_view)
         self.clear()
@@ -107,7 +110,7 @@ class chat_view_manager:
                         pos = pos-1
 
                 msg = "".join(nmsg)
-                self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t   ", self.name_tag)
+                self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t  ", self.name_tag)
                 self.ctx.insert_with_tags(self.ctx.get_end_iter(), msg, self.msg_tag)
 
             self.ctx.insert(self.ctx.get_end_iter(), "\n")

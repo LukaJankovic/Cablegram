@@ -180,3 +180,4 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.cvm = chat_view_manager(self.chat_view.get_buffer())
         self.cvm.setup_indent(self.chat_view)
+        self.connect("notify::position", self.cvm.draw_messages)

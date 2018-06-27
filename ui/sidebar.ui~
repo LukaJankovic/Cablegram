@@ -48,8 +48,5 @@
         </child>
       </object>
     </child>
-    <style>
-      <class name="dialog_item"/>
-    </style>
   </template>
 </interface>
