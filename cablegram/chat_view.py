@@ -18,9 +18,10 @@
 from gi.repository import Gtk, Gdk, GLib, GObject, Pango
 import math
 
-class chat_view_manager:
+class ChatView(Gtk.TextView):
 
-    ctx = None
+    __gtype_name__ = 'ChatView'
+
     longest_name = -1
 
     name_tag = None
@@ -28,52 +29,72 @@ class chat_view_manager:
 
     messages_list = None
 
-    def __init__(self, ctx):
-        self.ctx = ctx
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.init_template()
 
         self.setup_tags()
+
+        self.set_vexpand(True)
+        self.set_wrap_mode(Gtk.WrapMode.WORD)
+
+    def do_get_preferred_width(self):
+        return 1
 
     def setup_tags(self):
 
         #self.name_tag = self.ctx.create_tag("name", weight=Pango.Weight.BOLD, left_margin=5, left_margin_set=True)
-        self.name_tag = self.ctx.create_tag("name", weight=Pango.Weight.BOLD)
-        self.msg_tag = self.ctx.create_tag("msg")
+        #self.name_tag = self.get_buffer().create_tag("name", weight=Pango.Weight.BOLD)
+        #self.msg_tag = self.get_buffer().create_tag("msg")
+        #self.msg_tag.indent = 20
+        #self.msg_tag.indent_set = True
 
-    def setup_indent(self, text_view):
+        tag_table = self.get_buffer().get_tag_table()
 
-        text_view.tabs = None
+        tags = [
+            {
+                "name": "name",
+                "weight": Pango.Weight.BOLD
+            },
+            {
+                "name": "msg",
+                "indent": 20
+            }
+        ]
 
-        #TODO: Make customizable
+        for tag in tags:
+            tag_table.add(Gtk.TextTag(tag))
 
-        ctx = text_view.get_pango_context()
+    def setup_indent(self):
+
+        self.tabs = None
+        ctx = self.get_pango_context()
         metrics = ctx.get_metrics(None, None)
         char_width = max(metrics.get_approximate_char_width(), metrics.get_approximate_digit_width())
         pixel_width = Pango.units_to_double(char_width)
 
-        print("LONGEST NAME")
-        print(self.longest_name)
+        tabs_array = Pango.TabArray(1, True)
+        tabs_array.set_tab(0, Pango.TabAlign.LEFT, 100)
 
-        tabs = Pango.TabArray(1, True)
-        tabs.set_tab(0, Pango.TabAlign.LEFT, self.longest_name * pixel_width + 3)
-        text_view.set_tabs(tabs)
+        self.set_tabs(tabs_array)
 
     def clear(self):
-        self.ctx.set_text("")
+        self.get_buffer().set_text("")
 
-    def draw_messages(self, text_view):
+    def draw_messages(self):
 
         if not self.messages_list:
             return
 
-        self.setup_indent(text_view)
+        self.setup_indent()
         self.clear()
 
-        ctx = text_view.get_pango_context()
+        ctx = self.get_pango_context()
         metrics = ctx.get_metrics(None, None)
         char_width = max(metrics.get_approximate_char_width(), metrics.get_approximate_digit_width())
         pixel_width = Pango.units_to_double(char_width)
 
-        tv_w = text_view.get_allocated_width()
+        tv_w = self.get_allocated_width()
         cpl = int(tv_w / pixel_width)
 
         for item in self.messages_list:
@@ -81,39 +102,14 @@ class chat_view_manager:
             sender = item["sender"]
             msg = item["msg"]
 
-            if (len(msg)+(self.longest_name+6)) < cpl:
-                self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t   ", self.name_tag)
-                self.ctx.insert_with_tags(self.ctx.get_end_iter(), msg, self.msg_tag)
+            if not item["msg"]:
+                #Other type of msg (i.e. image)
+                msg = ""
 
-            else:
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender+"\t", self.name_tag)
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg, self.msg_tag)
 
-                lbsn = int(math.ceil(((len(msg)+(self.longest_name+7))/cpl)))
-                nmsg = list(msg)
-
-                print("MSG "+msg)
-                print(lbsn)
-                print(lbsn*int(cpl-(self.longest_name+7)))
-                print(str(len(msg)))
-
-                if lbsn*int(cpl-(self.longest_name+7)) <= len(msg):
-                    lbsn = lbsn+1
-
-                for i in range(lbsn):
-
-                    lb = False
-                    pos = i*int(cpl-(self.longest_name+7))
-
-                    while lb == False:
-                        if msg[pos] == " ":
-                            nmsg[int(pos)] = " \n\t   "
-                            lb = True
-                        pos = pos-1
-
-                msg = "".join(nmsg)
-                self.ctx.insert_with_tags(self.ctx.get_end_iter(), sender+"\t  ", self.name_tag)
-                self.ctx.insert_with_tags(self.ctx.get_end_iter(), msg, self.msg_tag)
-
-            self.ctx.insert(self.ctx.get_end_iter(), "\n")
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
 
     def add_message(self, sender, msg):
 

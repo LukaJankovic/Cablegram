@@ -25,7 +25,7 @@ from .gi_composites import GtkTemplate
 
 from .login import LoginWindow
 from .sidebar import SidebarChatItem
-from .chat_view import *
+from .chat_view import ChatView
 
 from cablegram.wrapper.universe import Universe
 
@@ -35,9 +35,9 @@ class UniverseWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'UniverseWindow'
 
     sidebar_list = GtkTemplate.Child()
-    chat_view = GtkTemplate.Child()
+    chat_wrapper = GtkTemplate.Child()
+    chat_view = None
 
-    cvm = None
     contacts = None
 
     def __init__(self, **kwargs):
@@ -62,7 +62,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         def sidebar_clicked(a, row):
 
-            self.cvm.clear()
+            self.chat_view.clear()
 
             dialog_item = self.contacts[row.get_index()]
             history = None
@@ -76,14 +76,14 @@ class UniverseWindow(Gtk.ApplicationWindow):
                 #history = Universe.instance().get_history(dialog_item.channel["id"])
             #print(history)
 
-            self.cvm.messages_list = []
+            self.chat_view.messages_list = []
 
             for msg in history["messages"]:
                 if hasattr(msg, 'text'):
-                    self.cvm.add_message(msg["from_user"]["first_name"], msg["text"])
+                    self.chat_view.add_message(msg["from_user"]["first_name"], msg["text"])
 
-            self.cvm.setup_indent(self.chat_view)
-            self.cvm.draw_messages(self.chat_view)
+            self.chat_view.setup_indent()
+            self.chat_view.draw_messages()
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 
@@ -178,6 +178,10 @@ class UniverseWindow(Gtk.ApplicationWindow):
         # Chat View
         #
 
-        self.cvm = chat_view_manager(self.chat_view.get_buffer())
-        self.cvm.setup_indent(self.chat_view)
-        self.connect("notify::position", self.cvm.draw_messages)
+        self.chat_wrapper.hscrollbar_policy = Gtk.PolicyType.NEVER
+
+        self.chat_view = ChatView()
+        self.chat_wrapper.add(self.chat_view)
+        self.chat_wrapper.show_all()
+
+        self.chat_view.setup_indent()

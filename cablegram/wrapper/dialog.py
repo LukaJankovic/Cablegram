@@ -150,8 +150,6 @@ def fetch_dialogs(client):
 
     dialogs_complete = parse_dialogs(download_dialogs_raw(client, 0, 0, types.InputPeerEmpty()))
 
-    print(dialogs_complete)
-
     if len(dialogs_complete) == 20:
         total_dialogs = 20
 

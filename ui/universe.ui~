@@ -116,6 +116,9 @@
                       <object class="GtkListBox" id="sidebar_list">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <style>
+                          <class name="sidebar_list"/>
+                        </style>
                       </object>
                     </child>
                   </object>
@@ -153,23 +156,13 @@
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkScrolledWindow" id="chat_wrapper">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="hexpand">True</property>
                 <property name="vexpand">True</property>
                 <child>
-                  <object class="GtkTextView" id="chat_view">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="vexpand">True</property>
-                    <property name="pixels_above_lines">5</property>
-                    <property name="wrap_mode">word</property>
-                    <property name="left_margin">10</property>
-                    <property name="monospace">True</property>
-                    <style>
-                      <class name="chat_view"/>
-                    </style>
-                  </object>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
