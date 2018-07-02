@@ -44,26 +44,8 @@ class ChatView(Gtk.TextView):
     def setup_tags(self):
 
         #self.name_tag = self.ctx.create_tag("name", weight=Pango.Weight.BOLD, left_margin=5, left_margin_set=True)
-        #self.name_tag = self.get_buffer().create_tag("name", weight=Pango.Weight.BOLD)
-        #self.msg_tag = self.get_buffer().create_tag("msg")
-        #self.msg_tag.indent = 20
-        #self.msg_tag.indent_set = True
-
-        tag_table = self.get_buffer().get_tag_table()
-
-        tags = [
-            {
-                "name": "name",
-                "weight": Pango.Weight.BOLD
-            },
-            {
-                "name": "msg",
-                "indent": 20
-            }
-        ]
-
-        for tag in tags:
-            tag_table.add(Gtk.TextTag(tag))
+        self.name_tag = self.get_buffer().create_tag("name", weight=Pango.Weight.BOLD, foreground="#324664", left_margin=10)
+        self.msg_tag = self.get_buffer().create_tag("msg", left_margin=110)
 
     def setup_indent(self):
 

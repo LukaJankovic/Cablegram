@@ -77,6 +77,7 @@ class LoginWindow(Gtk.Dialog):
 
         #Close app when ESC key pressed
         def empty(self):
+            print("CLOSING")
             if not self.done:
                 os._exit(0)
 
