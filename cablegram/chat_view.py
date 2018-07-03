@@ -31,12 +31,7 @@ class ChatView(Gtk.TextView):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.init_template()
-
         self.setup_tags()
-
-        self.set_vexpand(True)
-        self.set_wrap_mode(Gtk.WrapMode.WORD)
 
     def do_get_preferred_width(self):
         return 1

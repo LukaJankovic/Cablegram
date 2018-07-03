@@ -180,7 +180,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.chat_wrapper.hscrollbar_policy = Gtk.PolicyType.NEVER
 
-        self.chat_view = ChatView()
+        self.chat_view = ChatView(wrap_mode=Gtk.WrapMode.WORD_CHAR)
         self.chat_wrapper.add(self.chat_view)
         self.chat_wrapper.show_all()
 

@@ -157,6 +157,7 @@
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkScrolledWindow" id="chat_wrapper">
+                <property name="width_request">0</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="hexpand">True</property>
