@@ -38,7 +38,6 @@ class ChatView(Gtk.TextView):
 
     def setup_tags(self):
 
-        #self.name_tag = self.ctx.create_tag("name", weight=Pango.Weight.BOLD, left_margin=5, left_margin_set=True)
         self.name_tag = self.get_buffer().create_tag("name", weight=Pango.Weight.BOLD, foreground="#324664", left_margin=10)
         self.msg_tag = self.get_buffer().create_tag("msg", left_margin=110)
 
@@ -66,14 +65,6 @@ class ChatView(Gtk.TextView):
         self.setup_indent()
         self.clear()
 
-        ctx = self.get_pango_context()
-        metrics = ctx.get_metrics(None, None)
-        char_width = max(metrics.get_approximate_char_width(), metrics.get_approximate_digit_width())
-        pixel_width = Pango.units_to_double(char_width)
-
-        tv_w = self.get_allocated_width()
-        cpl = int(tv_w / pixel_width)
-
         for item in self.messages_list:
 
             sender = item["sender"]
@@ -83,9 +74,10 @@ class ChatView(Gtk.TextView):
                 #Other type of msg (i.e. image)
                 msg = ""
 
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender+"\t", self.name_tag)
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg, self.msg_tag)
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
 
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg, self.msg_tag)
             self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
 
     def add_message(self, sender, msg):
