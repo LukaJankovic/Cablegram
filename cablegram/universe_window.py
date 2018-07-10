@@ -54,6 +54,10 @@ class UniverseWindow(Gtk.ApplicationWindow):
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
+    def scroll_to_end(self, a, b):
+        adj = self.chat_wrapper.get_vadjustment()
+        adj.set_value(adj.get_upper() - adj.get_page_size())
+
     def start_main(self):
 
         #
@@ -78,7 +82,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
             self.chat_view.messages_list = []
 
-            for msg in history["messages"]:
+            for msg in history:
                 if hasattr(msg, 'text'):
                     self.chat_view.add_message(msg["from_user"]["first_name"], msg["text"])
 
@@ -180,8 +184,11 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.chat_wrapper.hscrollbar_policy = Gtk.PolicyType.NEVER
 
-        self.chat_view = ChatView(wrap_mode=Gtk.WrapMode.WORD_CHAR)
+        self.chat_view = ChatView(wrap_mode=Gtk.WrapMode.WORD_CHAR,
+                                  editable=False,
+                                  cursor_visible=False)
         self.chat_wrapper.add(self.chat_view)
         self.chat_wrapper.show_all()
 
         self.chat_view.setup_indent()
+        self.chat_view.connect('size-allocate', self.scroll_to_end)

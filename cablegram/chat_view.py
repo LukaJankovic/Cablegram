@@ -31,15 +31,17 @@ class ChatView(Gtk.TextView):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
         self.setup_tags()
+        self.set_pixels_above_lines(5)
 
     def do_get_preferred_width(self):
         return 1
 
     def setup_tags(self):
 
-        self.name_tag = self.get_buffer().create_tag("name", weight=Pango.Weight.BOLD, foreground="#324664", left_margin=10)
-        self.msg_tag = self.get_buffer().create_tag("msg", left_margin=110)
+        self.name_tag = self.get_buffer().create_tag("name", weight=Pango.Weight.BOLD, foreground="#324664", left_margin=20)
+        self.msg_tag = self.get_buffer().create_tag("msg")
 
     def setup_indent(self):
 
@@ -49,15 +51,18 @@ class ChatView(Gtk.TextView):
         char_width = max(metrics.get_approximate_char_width(), metrics.get_approximate_digit_width())
         pixel_width = Pango.units_to_double(char_width)
 
+        indent = self.longest_name * pixel_width + 20
+
         tabs_array = Pango.TabArray(1, True)
-        tabs_array.set_tab(0, Pango.TabAlign.LEFT, 110)
+        tabs_array.set_tab(0, Pango.TabAlign.LEFT, indent)
 
         self.set_tabs(tabs_array)
-        self.set_left_margin(110)
-        self.set_indent(-110)
+        self.set_left_margin(indent)
+        self.set_indent(-indent)
 
     def clear(self):
         self.get_buffer().set_text("")
+        self.longest_name = -1
 
     def draw_messages(self):
 

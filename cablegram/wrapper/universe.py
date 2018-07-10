@@ -83,8 +83,7 @@ class Universe(Singleton):
 
     def get_history(self, user_id):
         try:
-            history = self.app.get_history(user_id)
-            return history
+            return list(reversed(self.app.get_history(user_id)["messages"]))
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
             #Flood error
             return error
