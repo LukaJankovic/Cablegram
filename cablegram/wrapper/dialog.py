@@ -71,8 +71,6 @@ def parse_dialogs(dialogs):
 
     for dialog in dialogs["dialogs"]:
 
-        #TODO: Have a function that creates "return_item"-objects (AKA clean this mess up)
-
         if type(dialog["peer"]) == types.PeerUser:
             current_user = None
             for user in dialogs["users"]:

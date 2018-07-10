@@ -36,6 +36,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
     sidebar_list = GtkTemplate.Child()
     chat_wrapper = GtkTemplate.Child()
+    chat_revealer = GtkTemplate.Child()
     chat_view = None
 
     contacts = None
@@ -66,6 +67,11 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         def sidebar_clicked(a, row):
 
+            while Gtk.events_pending():
+                Gtk.main_iteration_do(False)
+
+            self.chat_revealer.set_reveal_child(True)
+
             self.chat_view.clear()
 
             dialog_item = self.contacts[row.get_index()]
@@ -87,7 +93,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     self.chat_view.add_message(msg["from_user"]["first_name"], msg["text"])
 
             self.chat_view.setup_indent()
-            self.chat_view.draw_messages()
+            self.chat_view.draw_messages(self.chat_revealer)
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 
@@ -192,3 +198,9 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.chat_view.setup_indent()
         self.chat_view.connect('size-allocate', self.scroll_to_end)
+
+        #
+        # Revealer
+        #
+
+        self.chat_revealer.set_reveal_child(False)

@@ -64,7 +64,7 @@ class ChatView(Gtk.TextView):
         self.get_buffer().set_text("")
         self.longest_name = -1
 
-    def draw_messages(self):
+    def draw_messages(self, revealer=None):
 
         if not self.messages_list:
             return
@@ -86,6 +86,12 @@ class ChatView(Gtk.TextView):
 
             self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg.replace("\n", ""), self.msg_tag)
             self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+
+        if revealer:
+            while Gtk.events_pending():
+                Gtk.main_iteration_do(False)
+
+            revealer.set_reveal_child(False)
 
     def add_message(self, sender, msg):
 
