@@ -50,9 +50,11 @@ class ChatView(Gtk.TextView):
         pixel_width = Pango.units_to_double(char_width)
 
         tabs_array = Pango.TabArray(1, True)
-        tabs_array.set_tab(0, Pango.TabAlign.LEFT, 100)
+        tabs_array.set_tab(0, Pango.TabAlign.LEFT, 110)
 
         self.set_tabs(tabs_array)
+        self.set_left_margin(110)
+        self.set_indent(-110)
 
     def clear(self):
         self.get_buffer().set_text("")
@@ -77,7 +79,7 @@ class ChatView(Gtk.TextView):
             self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
             self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
 
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg, self.msg_tag)
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg.replace("\n", ""), self.msg_tag)
             self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
 
     def add_message(self, sender, msg):
