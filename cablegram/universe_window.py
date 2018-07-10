@@ -198,9 +198,3 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.chat_view.setup_indent()
         self.chat_view.connect('size-allocate', self.scroll_to_end)
-
-        #
-        # Revealer
-        #
-
-        self.chat_revealer.set_reveal_child(False)

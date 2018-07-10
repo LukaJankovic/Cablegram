@@ -76,12 +76,11 @@ class LoginWindow(Gtk.Dialog):
         self.pages = [self.intro_page, self.api_page, self.phone_page, self.code_page]
 
         #Close app when ESC key pressed
-        def empty(self):
-            print("CLOSING")
+        def close(self):
             if not self.done:
                 os._exit(0)
 
-        self.connect("close", empty)
+        self.connect("close", close)
 
         #Buttons / Connections
         def back_clicked(self, root):
@@ -176,8 +175,8 @@ class LoginWindow(Gtk.Dialog):
                         universe_window.start_main()
 
                         root.done = True
-                        root.close()
-                        root.destroy()
+                        root.hide()
+                        #root.destroy()
 
                 t = threading.Thread(target=code_callback)
                 t.start()
