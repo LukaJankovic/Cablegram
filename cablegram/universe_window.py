@@ -167,14 +167,14 @@ class UniverseWindow(Gtk.ApplicationWindow):
                 try:
                     if dialog.dialog_type == "user" and dialog.from_user == "you":
                         if dialog.from_user == "you":
-                            sidebarItem.chat_label.set_text("You: "+dialog.message["message"])
+                            sidebarItem.chat_label.set_text("You: "+dialog.message["message"].replace("\n", " "))
                     elif dialog.dialog_type == "chat":
                         if dialog.from_user["id"] == Universe.instance().me["id"]:
-                            sidebarItem.chat_label.set_text("You: "+dialog.message["message"])
+                            sidebarItem.chat_label.set_text("You: "+dialog.message["message"].replace("\n", " "))
                         else:
-                            sidebarItem.chat_label.set_text(dialog.from_user["first_name"]+": "+dialog.message["message"])
+                            sidebarItem.chat_label.set_text(dialog.from_user["first_name"]+": "+dialog.message["message"].replace("\n", " "))
                     else:
-                        sidebarItem.chat_label.set_text(dialog.message["message"])
+                        sidebarItem.chat_label.set_text(dialog.message["message"].replace("\n", " "))
                 except AttributeError as e:
                     print("Unexpected message")
                     print("Error:")
