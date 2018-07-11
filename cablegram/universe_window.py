@@ -77,10 +77,14 @@ class UniverseWindow(Gtk.ApplicationWindow):
             dialog_item = self.contacts[row.get_index()]
             history = None
 
+            # TODO: Cleanup
+
             if dialog_item.dialog_type == "user":
                 history = Universe.instance().get_history(dialog_item.user["id"])
+                self.chat_view.current_id = dialog_item.user["id"]
             elif dialog_item.dialog_type == "chat":
                 history = Universe.instance().get_history(dialog_item.chat["id"])
+                self.chat_view.current_id = dialog_item.chat["id"]
             # TODO: Add channel support
             #else:
                 #history = Universe.instance().get_history(dialog_item.channel["id"])
@@ -198,3 +202,5 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.chat_view.setup_indent()
         self.chat_view.connect('size-allocate', self.scroll_to_end)
+
+        Universe.instance().incoming_callback = self.chat_view.append_message

@@ -28,6 +28,7 @@ class ChatView(Gtk.TextView):
     msg_tag = None
 
     messages_list = None
+    current_id = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -74,6 +75,8 @@ class ChatView(Gtk.TextView):
 
         for item in self.messages_list:
 
+            print(item)
+
             sender = item["sender"]
             msg = item["msg"]
 
@@ -92,6 +95,25 @@ class ChatView(Gtk.TextView):
                 Gtk.main_iteration_do(False)
 
             revealer.set_reveal_child(False)
+
+    def append_message(self, item, msg_id):
+
+        if not item:
+            return
+
+        if not msg_id == self.current_id:
+            return
+
+        self.add_message(item["sender"], item["msg"])
+
+        sender = item["sender"]
+        msg = item["msg"]
+
+        self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
+        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+
+        self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg, self.msg_tag)
+        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
 
     def add_message(self, sender, msg):
 
