@@ -66,9 +66,6 @@ class Universe(Singleton):
 
             @self.app.on_message(pyrogram.Filters.text, pyrogram.Filters.private)
             def message_recieved(client, message):
-                print("NEW MESSAGS")
-                print(message)
-
                 if self.incoming_callback:
                     if hasattr(message, "text") and hasattr(message, "chat"):
                         self.incoming_callback({"sender":message["from_user"]["first_name"], "msg":message["text"]}, message["chat"]["id"])

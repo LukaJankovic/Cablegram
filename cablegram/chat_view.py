@@ -75,8 +75,6 @@ class ChatView(Gtk.TextView):
 
         for item in self.messages_list:
 
-            print(item)
-
             sender = item["sender"]
             msg = item["msg"]
 
@@ -106,14 +104,35 @@ class ChatView(Gtk.TextView):
 
         self.add_message(item["sender"], item["msg"])
 
-        sender = item["sender"]
-        msg = item["msg"]
+        #sender = item["sender"]
+        #msg = item["msg"]
+        #self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender+"\t"+msg.replace("\n", "")+"\n")
 
-        self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
-        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+        msg = item["sender"]+"\t"+item["msg"].replace("\n", "")+"\n"
 
-        self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg, self.msg_tag)
-        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+        start_iter = self.get_buffer().get_end_iter()
+        end_iter = self.get_buffer().get_iter_at_offset(start_iter.get_offset()+len(msg))
+
+        sender_start = start_iter
+        sender_end = self.get_buffer().get_iter_at_offset(start_iter.get_offset()+len(item["sender"]))
+
+        msg_start = sender_end
+        msg_end = end_iter
+
+        def draw_msg(a):
+            #self.get_buffer().insert(start_iter, msg)
+            #self.get_buffer().apply_tag(self.name_tag, sender_start, sender_end)
+            #self.get_buffer().apply_tag(self.msg_tag, msg_start, msg_end)
+
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), item["sender"], self.name_tag)
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), item["msg"], self.msg_tag)
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+
+            return 0
+
+        Gdk.threads_add_idle(100, draw_msg, None)
 
     def add_message(self, sender, msg):
 
