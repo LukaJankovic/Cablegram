@@ -31,6 +31,8 @@ class SidebarChatItem(Gtk.ListBoxRow):
     chat_name = None
     channel_name = None
 
+    element_id = None
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.init_template()

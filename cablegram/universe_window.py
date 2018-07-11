@@ -101,7 +101,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 
-        self.update_sidebar()
+        self.setup_sidebar()
 
         #
         # Chat View
@@ -121,7 +121,25 @@ class UniverseWindow(Gtk.ApplicationWindow):
         Universe.instance().incoming_callbacks.append(self.chat_view.append_message)
         Universe.instance().incoming_callbacks.append(self.update_sidebar)
 
-    def update_sidebar(self, a=None, b=None):
+    def update_sidebar(self, msg, item_id):
+
+        item = None
+
+        for sidebar_item in self.sidebar_list.get_children():
+            if item_id == sidebar_item.element_id:
+                item = sidebar_item
+                if msg["sender"]["id"] == Universe.instance().me["id"]:
+                    item.chat_label.set_text("You: "+msg["msg"])
+                else:
+                    item.chat_label.set_text(msg["msg"])
+
+                # TODO: chats...
+
+        if item:
+            self.sidebar_list.remove(item)
+            self.sidebar_list.insert(item, 0)
+
+    def setup_sidebar(self):
 
         self.contacts = Universe.instance().get_dialogs()
 
@@ -181,14 +199,17 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
                     sidebarItem.first_name = dialog.user["first_name"]
                     sidebarItem.last_name = dialog.user["last_name"]
+                    sidebarItem.element_id = dialog.dialog["peer"]["user_id"]
 
                 elif dialog.dialog_type == "chat":
                     sidebarItem.contact_label.set_text(dialog.chat["title"])
                     sidebarItem.chat_name = dialog.chat["title"]
+                    sidebarItem.element_id = dialog.dialog["peer"]["chat_id"]
 
                 elif dialog.dialog_type == "channel":
                     sidebarItem.contact_label.set_text(dialog.from_user)
                     sidebarItem.channel_name = dialog.from_user
+                    sidebarItem.element_id = dialog.dialog["peer"]["channel_id"]
 
                 try:
                     if dialog.dialog_type == "user" and dialog.from_user == "you":
@@ -208,6 +229,4 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     print("Item")
                     print(dialog.message)
 
-                Gdk.threads_add_idle(100, self.sidebar_list.insert, sidebarItem, -1)
-
-               # self.sidebar_list.insert(sidebarItem, -1)
+                self.sidebar_list.insert(sidebarItem, -1)

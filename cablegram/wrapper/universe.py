@@ -68,7 +68,7 @@ class Universe(Singleton):
             def message_recieved(client, message):
                 for cb in self.incoming_callbacks:
                     if hasattr(message, "text") and hasattr(message, "chat"):
-                        cb({"sender":message["from_user"]["first_name"], "msg":message["text"]}, message["chat"]["id"])
+                        cb({"sender":message["from_user"], "msg":message["text"]}, message["chat"]["id"])
 
             return None
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:

@@ -65,6 +65,15 @@ class ChatView(Gtk.TextView):
         self.get_buffer().set_text("")
         self.longest_name = -1
 
+    def draw_message(self, sender, msg):
+        self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
+        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+
+        self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg.replace("\n", " "), self.msg_tag)
+        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+
+        return 0
+
     def draw_messages(self, revealer=None):
 
         if not self.messages_list:
@@ -82,11 +91,7 @@ class ChatView(Gtk.TextView):
                 #Other type of msg (i.e. image)
                 msg = ""
 
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
-            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
-
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg.replace("\n", ""), self.msg_tag)
-            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+            self.draw_message(sender, msg)
 
         if revealer:
             while Gtk.events_pending():
@@ -102,45 +107,20 @@ class ChatView(Gtk.TextView):
         if not msg_id == self.current_id:
             return
 
+        sender = item["sender"]["first_name"]
+        msg = item["msg"]
+
         self.add_message(item["sender"], item["msg"])
 
-        #sender = item["sender"]
-        #msg = item["msg"]
-        #self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender+"\t"+msg.replace("\n", "")+"\n")
-
-        msg = item["sender"]+"\t"+item["msg"].replace("\n", "")+"\n"
-
-        start_iter = self.get_buffer().get_end_iter()
-        end_iter = self.get_buffer().get_iter_at_offset(start_iter.get_offset()+len(msg))
-
-        sender_start = start_iter
-        sender_end = self.get_buffer().get_iter_at_offset(start_iter.get_offset()+len(item["sender"]))
-
-        msg_start = sender_end
-        msg_end = end_iter
-
-        def draw_msg(a):
-            #self.get_buffer().insert(start_iter, msg)
-            #self.get_buffer().apply_tag(self.name_tag, sender_start, sender_end)
-            #self.get_buffer().apply_tag(self.msg_tag, msg_start, msg_end)
-
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), item["sender"], self.name_tag)
-            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
-
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), item["msg"], self.msg_tag)
-            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
-
-            return 0
-
-        Gdk.threads_add_idle(100, draw_msg, None)
+        Gdk.threads_add_idle(100, self.draw_message, sender, msg)
 
     def add_message(self, sender, msg):
 
-        self.messages_list.append({"sender":sender, "msg":msg})
-
         try:
+            self.messages_list.append({"sender":sender, "msg":msg})
+
             if len(sender) > self.longest_name:
                 self.longest_name = len(sender)
         except TypeError as e:
-            print("error inserting message: ")
-            print(e)
+            if len(sender["first_name"]) > self.longest_name:
+                self.longest_name = len(sender["first_name"])
