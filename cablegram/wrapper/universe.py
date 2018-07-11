@@ -44,7 +44,7 @@ class Singleton(object):
 class Universe(Singleton):
     app = None
     me = None
-    incoming_callback = None
+    incoming_callbacks = []
     loggedin = False
 
     def __init__(self):
@@ -66,9 +66,9 @@ class Universe(Singleton):
 
             @self.app.on_message(pyrogram.Filters.text, pyrogram.Filters.private)
             def message_recieved(client, message):
-                if self.incoming_callback:
+                for cb in self.incoming_callbacks:
                     if hasattr(message, "text") and hasattr(message, "chat"):
-                        self.incoming_callback({"sender":message["from_user"]["first_name"], "msg":message["text"]}, message["chat"]["id"])
+                        cb({"sender":message["from_user"]["first_name"], "msg":message["text"]}, message["chat"]["id"])
 
             return None
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:

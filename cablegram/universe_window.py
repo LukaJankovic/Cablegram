@@ -50,10 +50,10 @@ class UniverseWindow(Gtk.ApplicationWindow):
         style_provider.load_from_resource("/org/gnome/Cablegram/style/universe.css")
 
         Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(),
-            style_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
+                Gdk.Screen.get_default(),
+                style_provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+                )
 
     def scroll_to_end(self, a, b):
         adj = self.chat_wrapper.get_vadjustment()
@@ -101,10 +101,32 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 
+        self.update_sidebar()
+
+        #
+        # Chat View
+        #
+
+        self.chat_wrapper.hscrollbar_policy = Gtk.PolicyType.NEVER
+
+        self.chat_view = ChatView(wrap_mode=Gtk.WrapMode.WORD_CHAR,
+                editable=False,
+                cursor_visible=False)
+        self.chat_wrapper.add(self.chat_view)
+        self.chat_wrapper.show_all()
+
+        self.chat_view.setup_indent()
+        self.chat_view.connect('size-allocate', self.scroll_to_end)
+
+        Universe.instance().incoming_callbacks.append(self.chat_view.append_message)
+        Universe.instance().incoming_callbacks.append(self.update_sidebar)
+
+    def update_sidebar(self, a=None, b=None):
+
         self.contacts = Universe.instance().get_dialogs()
 
-        #TODO: Push error handling to other file
-        #Error handling start
+        for child in self.sidebar_list.get_children():
+            self.sidebar_list.remove(child)
 
         dialog_message = None
 
@@ -187,20 +209,3 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     print(dialog.message)
 
                 self.sidebar_list.insert(sidebarItem, -1)
-
-        #
-        # Chat View
-        #
-
-        self.chat_wrapper.hscrollbar_policy = Gtk.PolicyType.NEVER
-
-        self.chat_view = ChatView(wrap_mode=Gtk.WrapMode.WORD_CHAR,
-                                  editable=False,
-                                  cursor_visible=False)
-        self.chat_wrapper.add(self.chat_view)
-        self.chat_wrapper.show_all()
-
-        self.chat_view.setup_indent()
-        self.chat_view.connect('size-allocate', self.scroll_to_end)
-
-        Universe.instance().incoming_callback = self.chat_view.append_message
