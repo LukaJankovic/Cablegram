@@ -208,4 +208,6 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     print("Item")
                     print(dialog.message)
 
-                self.sidebar_list.insert(sidebarItem, -1)
+                Gdk.threads_add_idle(100, self.sidebar_list.insert, sidebarItem, -1)
+
+               # self.sidebar_list.insert(sidebarItem, -1)
