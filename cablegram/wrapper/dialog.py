@@ -169,7 +169,7 @@ def fetch_dialogs(client):
                 latest_peer = input_peer_from_chat(latest_item)
             elif isinstance(latest_item, types.PeerChannel):
                 a_hash = None
-                for msg in dialogs_complete["chats"]:
+                for msg in dialogs_complete:
                     try:
                         if msg.channel["id"] == latest_item["channel_id"]:
                             a_hash = msg.channel["access_hash"]

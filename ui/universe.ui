@@ -178,7 +178,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry">
+                  <object class="GtkEntry" id="msg_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="margin_left">5</property>

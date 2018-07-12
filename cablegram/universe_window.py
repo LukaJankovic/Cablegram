@@ -37,6 +37,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
     sidebar_list = GtkTemplate.Child()
     chat_wrapper = GtkTemplate.Child()
     chat_revealer = GtkTemplate.Child()
+    msg_entry = GtkTemplate.Child()
     chat_view = None
 
     contacts = None
@@ -121,9 +122,18 @@ class UniverseWindow(Gtk.ApplicationWindow):
         Universe.instance().incoming_callbacks.append(self.chat_view.append_message)
         Universe.instance().incoming_callbacks.append(self.update_sidebar)
 
+        #
+        # Other
+        #
+
+        self.msg_entry.connect("activate", self.send_message)
+
     def update_sidebar(self, msg, item_id):
 
         item = None
+
+        if item_id < 0:
+            item_id *= -1
 
         for sidebar_item in self.sidebar_list.get_children():
             if item_id == sidebar_item.element_id:
@@ -181,11 +191,9 @@ class UniverseWindow(Gtk.ApplicationWindow):
         else:
 
             for dialog in self.contacts:
-
                 sidebarItem = SidebarChatItem()
 
                 if dialog.dialog_type == "user":
-
                     first = dialog.user["first_name"]
                     last = dialog.user["last_name"]
 
@@ -230,3 +238,8 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     print(dialog.message)
 
                 self.sidebar_list.insert(sidebarItem, -1)
+
+    def send_message(self, sender):
+         Universe.instance().send_message(self.msg_entry.get_text(), self.chat_view.current_id)
+         self.chat_view.append_message({"sender":Universe.instance().me, "msg":self.msg_entry.get_text()}, self.chat_view.current_id)
+         self.msg_entry.set_text("")

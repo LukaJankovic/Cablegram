@@ -29,6 +29,7 @@ class ChatView(Gtk.TextView):
 
     messages_list = None
     current_id = None
+    prev_line_user = -1
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -66,8 +67,15 @@ class ChatView(Gtk.TextView):
         self.longest_name = -1
 
     def draw_message(self, sender, msg):
-        self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
-        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+
+        if not self.prev_line_user == sender or self.prev_line_user == -1:
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+
+            self.prev_line_user = sender
+        else:
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), " ", self.name_tag)
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
 
         self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg.replace("\n", " "), self.msg_tag)
         self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
@@ -100,6 +108,9 @@ class ChatView(Gtk.TextView):
             revealer.set_reveal_child(False)
 
     def append_message(self, item, msg_id):
+
+        if msg_id < 0:
+            msg_id *= -1
 
         if not item:
             return

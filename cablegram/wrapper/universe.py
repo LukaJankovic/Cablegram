@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from gi.repository import Gdk
+
 import pyrogram
 import threading
 import os
@@ -64,11 +66,11 @@ class Universe(Singleton):
 
             self.me = self.app.get_me()
 
-            @self.app.on_message(pyrogram.Filters.text, pyrogram.Filters.private)
+            @self.app.on_message()
             def message_recieved(client, message):
                 for cb in self.incoming_callbacks:
                     if hasattr(message, "text") and hasattr(message, "chat"):
-                        cb({"sender":message["from_user"], "msg":message["text"]}, message["chat"]["id"])
+                        Gdk.threads_add_idle(100, cb, {"sender":message["from_user"], "msg":message["text"]}, message["chat"]["id"])
 
             return None
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
@@ -103,4 +105,7 @@ class Universe(Singleton):
             return error
         except pyrogram.api.errors.exceptions.bad_request_400.PhoneCodeInvalid as error:
             #Invalid phone code
-            return error 
+            return error
+
+    def send_message(self, msg, chat_id):
+        self.app.send_message(chat_id, msg) 
