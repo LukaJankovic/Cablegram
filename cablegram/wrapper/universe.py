@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gdk
+from gi.repository import Gdk, GObject
 
 import pyrogram
 import threading
@@ -108,4 +108,24 @@ class Universe(Singleton):
             return error
 
     def send_message(self, msg, chat_id):
-        self.app.send_message(chat_id, msg) 
+        self.app.send_message(chat_id, msg)
+
+    def download_file(self, msg):
+
+        location = ""
+        event = threading.Event()
+        GObject.threads_init()
+
+        def progress_track(client, current, total, *args):
+            #print("===")
+            #print(current)
+            #print(total)
+
+            if current == total:
+                print("done")
+                event.set()
+
+        location = self.app.download_media(msg, str(Path.home()) + "/.var/app/org.gnome.Cablegram/cache/tmp/", False, progress_track, [0])
+
+        event.wait()
+        return location

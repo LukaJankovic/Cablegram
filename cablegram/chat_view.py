@@ -18,6 +18,8 @@
 from gi.repository import Gtk, Gdk, GLib, GObject, Pango
 import math
 
+from cablegram.wrapper.universe import Universe
+
 class ChatView(Gtk.TextView):
 
     __gtype_name__ = 'ChatView'
@@ -93,13 +95,16 @@ class ChatView(Gtk.TextView):
         for item in self.messages_list:
 
             sender = item["sender"]
-            msg = item["msg"]
+            msg = ""
 
-            if not item["msg"]:
-                #Other type of msg (i.e. image)
-                msg = ""
+            if item["msg"]["text"]:
+                msg = item["msg"]["text"]
+                self.draw_message(sender, msg)
 
-            self.draw_message(sender, msg)
+            else:
+                #image...
+                #print(type(item["msg"]))
+                print(Universe.instance().download_file(item["msg"]))
 
         if revealer:
             while Gtk.events_pending():

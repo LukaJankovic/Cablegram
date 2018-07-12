@@ -94,8 +94,9 @@ class UniverseWindow(Gtk.ApplicationWindow):
             self.chat_view.messages_list = []
 
             for msg in history:
-                if hasattr(msg, 'text'):
-                    self.chat_view.add_message(msg["from_user"]["first_name"], msg["text"])
+                #print(msg)
+                #if hasattr(msg, 'text'):
+                self.chat_view.add_message(msg["from_user"]["first_name"], msg)
 
             self.chat_view.setup_indent()
             self.chat_view.draw_messages(self.chat_revealer)
@@ -240,6 +241,6 @@ class UniverseWindow(Gtk.ApplicationWindow):
                 self.sidebar_list.insert(sidebarItem, -1)
 
     def send_message(self, sender):
-         Universe.instance().send_message(self.msg_entry.get_text(), self.chat_view.current_id)
-         self.chat_view.append_message({"sender":Universe.instance().me, "msg":self.msg_entry.get_text()}, self.chat_view.current_id)
-         self.msg_entry.set_text("")
+        Universe.instance().send_message(self.msg_entry.get_text(), self.chat_view.current_id)
+        self.chat_view.append_message({"sender":Universe.instance().me, "msg":self.msg_entry.get_text()}, self.chat_view.current_id)
+        self.msg_entry.set_text("")
