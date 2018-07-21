@@ -116,7 +116,7 @@ class Universe(Singleton):
         event = threading.Event()
         GObject.threads_init()
 
-        def progress_track(client, current, total, *args):
+        def progress_track(client, current, total, event):
             #print("===")
             #print(current)
             #print(total)
@@ -125,7 +125,7 @@ class Universe(Singleton):
                 print("done")
                 event.set()
 
-        location = self.app.download_media(msg, str(Path.home()) + "/.var/app/org.gnome.Cablegram/cache/tmp/", False, progress_track, [0])
+        location = self.app.download_media(msg, str(Path.home()) + "/.var/app/org.gnome.Cablegram/cache/tmp/", False, progress_track, [event])
 
         event.wait()
         return location
