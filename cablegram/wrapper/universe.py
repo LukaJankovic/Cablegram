@@ -112,20 +112,30 @@ class Universe(Singleton):
 
     def download_file(self, msg):
 
+        class downloadThread(threading.Thread):
+            def __init__(self, app, msg):
+                threading.Thread.__init__(self)
+                self._msg = msg
+                self._app = app
+                self._return = None
+
+            def download_media(self, app, msg):
+                location = app.download_media(msg, str(Path.home()) + "/.var/app/org.gnome.Cablegram/cache/tmp/", True, None, None)
+                return location
+
+            def run(self):
+                self._return = self.download_media(self._app, self._msg)
+                print("Run "+self._return)
+
+            def join(self):
+                threading.Thread.join(self)
+                return self._return
+
         location = ""
-        event = threading.Event()
         GObject.threads_init()
 
-        def progress_track(client, current, total, event):
-            #print("===")
-            #print(current)
-            #print(total)
+        thread = downloadThread(self.app, msg)
+        thread.start()
+        location = thread.join()
 
-            if current == total:
-                print("done")
-                event.set()
-
-        location = self.app.download_media(msg, str(Path.home()) + "/.var/app/org.gnome.Cablegram/cache/tmp/", False, progress_track, [event])
-
-        event.wait()
         return location
