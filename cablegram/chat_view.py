@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gtk, Gdk, GLib, GObject, Pango
-import math
+from gi.repository import Gtk, Gdk, GdkPixbuf, GLib, GObject, Pango
+import math, threading
 
 from cablegram.wrapper.universe import Universe
 
@@ -32,6 +32,8 @@ class ChatView(Gtk.TextView):
     messages_list = None
     current_id = None
     prev_line_user = -1
+
+    images = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -67,6 +69,7 @@ class ChatView(Gtk.TextView):
     def clear(self):
         self.get_buffer().set_text("")
         self.longest_name = -1
+        self.images = []
 
     def draw_message(self, sender, msg):
 
@@ -83,6 +86,38 @@ class ChatView(Gtk.TextView):
         self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
 
         return 0
+
+    def draw_image_marker(self, position, name):
+        self.get_buffer().create_mark(str(name), position)
+        anchor = self.get_buffer().create_child_anchor(position)
+
+        self.images.append({"anchor":anchor, "id":name})
+
+    def draw_image(self, img_path, msg):
+        print("draw image "+img_path)
+        print("id "+ str(msg["message_id"]))
+
+        if not img_path:
+            return
+
+        img_iter = self.get_buffer().get_iter_at_mark(self.get_buffer().get_mark(str(msg["message_id"])))
+        #img = GdkPixbuf.Pixbuf.new_from_file(img_path)
+
+        anchor = None
+        for i in self.images :
+            if i["id"] == msg["message_id"]:
+                anchor = i["anchor"]
+
+        if anchor == None:
+            print("anchor none")
+            return
+
+        img = Gtk.Image()
+        img.set_from_file(img_path)
+        self.add_child_at_anchor(img, anchor)
+        img.show_all()
+
+        #self.get_buffer().insert_pixbuf(img_iter, img)
 
     def draw_messages(self, revealer=None):
 
@@ -103,8 +138,13 @@ class ChatView(Gtk.TextView):
 
             else:
                 #image...
-                #print(type(item["msg"]))
-                print(Universe.instance().download_file(item["msg"]))
+                print("item id " + str(item["msg"]["message_id"]))
+
+                self.draw_image_marker(self.get_buffer().get_end_iter(), item["msg"]["message_id"])
+
+                dl_thread = threading.Thread(target=Universe.instance().download_file, args=(item["msg"], self.draw_image, ))
+                dl_thread.daemon = True
+                dl_thread.start()
 
         if revealer:
             while Gtk.events_pending():

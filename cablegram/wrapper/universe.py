@@ -110,7 +110,7 @@ class Universe(Singleton):
     def send_message(self, msg, chat_id):
         self.app.send_message(chat_id, msg)
 
-    def download_file(self, msg):
+    def download_file(self, msg, callback):
 
         class downloadThread(threading.Thread):
             def __init__(self, app, msg):
@@ -125,7 +125,6 @@ class Universe(Singleton):
 
             def run(self):
                 self._return = self.download_media(self._app, self._msg)
-                print("Run "+self._return)
 
             def join(self):
                 threading.Thread.join(self)
@@ -137,5 +136,7 @@ class Universe(Singleton):
         thread = downloadThread(self.app, msg)
         thread.start()
         location = thread.join()
+
+        callback(location, msg)
 
         return location
