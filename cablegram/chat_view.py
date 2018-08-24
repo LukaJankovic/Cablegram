@@ -88,20 +88,15 @@ class ChatView(Gtk.TextView):
         return 0
 
     def draw_image_marker(self, position, name):
-        self.get_buffer().create_mark(str(name), position)
         anchor = self.get_buffer().create_child_anchor(position)
+        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
 
         self.images.append({"anchor":anchor, "id":name})
 
     def draw_image(self, img_path, msg):
-        print("draw image "+img_path)
-        print("id "+ str(msg["message_id"]))
 
         if not img_path:
             return
-
-        img_iter = self.get_buffer().get_iter_at_mark(self.get_buffer().get_mark(str(msg["message_id"])))
-        #img = GdkPixbuf.Pixbuf.new_from_file(img_path)
 
         anchor = None
         for i in self.images :
@@ -113,11 +108,12 @@ class ChatView(Gtk.TextView):
             return
 
         img = Gtk.Image()
-        img.set_from_file(img_path)
+        pix = GdkPixbuf.Pixbuf.new_from_file(img_path)
+        pix = pix.scale_simple(300, 300, GdkPixbuf.InterpType.BILINEAR)
+        img.set_from_pixbuf(pix)
+
         self.add_child_at_anchor(img, anchor)
         img.show_all()
-
-        #self.get_buffer().insert_pixbuf(img_iter, img)
 
     def draw_messages(self, revealer=None):
 
@@ -138,8 +134,8 @@ class ChatView(Gtk.TextView):
 
             else:
                 #image...
-                print("item id " + str(item["msg"]["message_id"]))
 
+                self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
                 self.draw_image_marker(self.get_buffer().get_end_iter(), item["msg"]["message_id"])
 
                 dl_thread = threading.Thread(target=Universe.instance().download_file, args=(item["msg"], self.draw_image, ))
