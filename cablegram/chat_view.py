@@ -108,8 +108,7 @@ class ChatView(Gtk.TextView):
             return
 
         img = Gtk.Image()
-        pix = GdkPixbuf.Pixbuf.new_from_file(img_path)
-        pix = pix.scale_simple(300, 300, GdkPixbuf.InterpType.BILINEAR)
+        pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(img_path, 300, 300, True)
         img.set_from_pixbuf(pix)
 
         self.add_child_at_anchor(img, anchor)
