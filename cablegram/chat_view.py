@@ -41,8 +41,14 @@ class ChatView(Gtk.TextView):
         self.setup_tags()
         self.set_pixels_above_lines(5)
 
+        self.connect('scroll-event', self.on_scroll)
+
     def do_get_preferred_width(self):
         return 1
+
+    def on_scroll(self, w, event):
+        print("scroll")
+        pass
 
     def setup_tags(self):
 
@@ -134,7 +140,26 @@ class ChatView(Gtk.TextView):
             else:
                 #image...
 
+
+    #            if not self.prev_line_user == sender or self.prev_line_user == -1:
+     #               self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+      #              self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), item["msg"]["from_user"]["first_name"], self.name_tag)
+       #             self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+
+        #            self.prev_line_user = sender
+
+   #             else:
+  #                  self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+ #                   self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), " ", self.name_tag)
+#                    self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+
+
                 self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+                self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), item["msg"]["from_user"]["first_name"], self.name_tag)
+                self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+
+                self.prev_line_user = sender
+
                 self.draw_image_marker(self.get_buffer().get_end_iter(), item["msg"]["message_id"])
 
                 dl_thread = threading.Thread(target=Universe.instance().download_file, args=(item["msg"], self.draw_image, ))
@@ -162,8 +187,7 @@ class ChatView(Gtk.TextView):
         msg = item["msg"]
 
         self.add_message(item["sender"], item["msg"])
-
-        Gdk.threads_add_idle(100, self.draw_message, sender, msg)
+        self.draw_message(sender, msg)
 
     def add_message(self, sender, msg):
 
