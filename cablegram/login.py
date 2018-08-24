@@ -119,7 +119,7 @@ class LoginWindow(Gtk.Dialog):
                 # Login...
                 def code_callback():
 
-                    def wait_for_code():
+                    def wait_for_code(self):
                         root.event.wait()
                         return root.code_entry.get_text()
 
