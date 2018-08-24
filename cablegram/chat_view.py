@@ -41,14 +41,8 @@ class ChatView(Gtk.TextView):
         self.setup_tags()
         self.set_pixels_above_lines(5)
 
-        self.connect('scroll-event', self.on_scroll)
-
     def do_get_preferred_width(self):
         return 1
-
-    def on_scroll(self, w, event):
-        print("scroll")
-        pass
 
     def setup_tags(self):
 
