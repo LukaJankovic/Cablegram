@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from gi.repository import Gtk, Gdk, GdkPixbuf, GLib, GObject, Pango
-import math, threading
+import math, threading, re
 
 from cablegram.wrapper.universe import Universe
 
@@ -28,6 +28,7 @@ class ChatView(Gtk.TextView):
 
     name_tag = None
     msg_tag = None
+    url_tag = None
 
     messages_list = None
     current_id = None
@@ -48,6 +49,9 @@ class ChatView(Gtk.TextView):
 
         self.name_tag = self.get_buffer().create_tag("name", weight=Pango.Weight.BOLD, foreground="#324664", left_margin=20)
         self.msg_tag = self.get_buffer().create_tag("msg")
+        self.url_tag = self.get_buffer().create_tag("url", style=Pango.Style.ITALIC, foreground="#324664", underline=Pango.Underline.SINGLE)
+
+        # TODO: make urls clickable (needs buttontag class)
 
     def setup_indent(self):
 
@@ -82,8 +86,24 @@ class ChatView(Gtk.TextView):
             self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), " ", self.name_tag)
             self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
 
-        self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), msg.replace("\n", " "), self.msg_tag)
-        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+        nmsg = msg.replace("\n", " ")
+        url_match = re.finditer(r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)", nmsg, re.I | re.M)
+        has_url = False
+
+        for match in url_match:
+
+            if not match.start() == 0:
+                self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), nmsg[:match.start()], self.msg_tag)
+
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), nmsg[match.start():match.end()], self.msg_tag, self.url_tag)
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), nmsg[match.end():], self.msg_tag)
+
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+            has_url = True
+
+        if has_url == False:
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), nmsg, self.msg_tag)
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
 
         return 0
 
