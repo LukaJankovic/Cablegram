@@ -58,7 +58,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
     def scroll_to_end(self, a=None, b=None):
         adj = self.chat_wrapper.get_vadjustment()
-        adj.set_value(adj.get_upper() - adj.get_page_size())
+        adj.set_value(adj.get_upper())
 
     def start_main(self):
 
@@ -245,3 +245,6 @@ class UniverseWindow(Gtk.ApplicationWindow):
         Universe.instance().send_message(self.msg_entry.get_text(), self.chat_view.current_id)
         self.chat_view.append_message({"sender":Universe.instance().me, "msg":self.msg_entry.get_text()}, self.chat_view.current_id)
         self.msg_entry.set_text("")
+
+        # TODO: Implement autoscroll on message send better
+        Gdk.threads_add_idle(1000, self.scroll_to_end)
