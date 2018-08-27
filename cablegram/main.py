@@ -89,6 +89,19 @@ class Application(Gtk.Application):
                     error_dialog.connect("response", exit_dialog)
                     error_dialog.show()
 
+def clear_cache(a=None):
+
+    #Clear cache folder
+    cache_folder = str(Path.home()) + "/.var/app/org.gnome.Cablegram/cache/tmp/"
+
+    for item in os.listdir(cache_folder):
+        item_path = os.path.join(cache_folder, item)
+        try:
+            os.unlink(item_path)
+        except Exception:
+            pass
+
 def main(version):
     app = Application()
+    app.connect('shutdown', clear_cache)
     return app.run(sys.argv)

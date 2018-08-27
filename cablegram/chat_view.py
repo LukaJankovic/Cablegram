@@ -77,7 +77,7 @@ class ChatView(Gtk.TextView):
 
     def draw_message(self, sender, msg):
 
-        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+#        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
 
         if not self.prev_line_user == sender or self.prev_line_user == -1:
             self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
@@ -103,9 +103,12 @@ class ChatView(Gtk.TextView):
 #            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
             has_url = True
 
+        has_url = False # REMOVE WHEN URL TAG FIXED
         if has_url == False:
             self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), nmsg, self.msg_tag)
 #            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+
+        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
 
         return 0
 
