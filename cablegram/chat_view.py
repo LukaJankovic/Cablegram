@@ -47,7 +47,8 @@ class ChatView(Gtk.TextView):
 
     def setup_tags(self):
 
-        self.name_tag = self.get_buffer().create_tag("name", weight=Pango.Weight.BOLD, foreground="#324664", left_margin=20)
+        #324664
+        self.name_tag = self.get_buffer().create_tag("name", weight=Pango.Weight.BOLD, left_margin=20)
         self.msg_tag = self.get_buffer().create_tag("msg")
         self.url_tag = self.get_buffer().create_tag("url", style=Pango.Style.ITALIC, foreground="#324664", underline=Pango.Underline.SINGLE)
 
@@ -92,6 +93,8 @@ class ChatView(Gtk.TextView):
         url_match = re.finditer(r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)", nmsg, re.I | re.M)
         has_url = False
 
+        url_match = [] # Remove when URL tag fixed
+
         for match in url_match:
 
             if not match.start() == 0:
@@ -103,7 +106,6 @@ class ChatView(Gtk.TextView):
 #            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
             has_url = True
 
-        has_url = False # REMOVE WHEN URL TAG FIXED
         if has_url == False:
             self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), nmsg, self.msg_tag)
 #            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
