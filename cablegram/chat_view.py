@@ -118,7 +118,13 @@ class ChatView(Gtk.TextView):
         anchor = self.get_buffer().create_child_anchor(position)
         self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
 
-        self.images.append({"anchor":anchor, "id":name})
+        spinner = Gtk.Spinner()
+        self.add_child_at_anchor(spinner, anchor)
+
+        spinner.show_all()
+        spinner.start()
+
+        self.images.append({"anchor":anchor, "id":name, "spinner":spinner})
 
     def draw_image(self, img_path, msg):
 
@@ -135,11 +141,21 @@ class ChatView(Gtk.TextView):
             return
 
         img = Gtk.Image()
-        pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(img_path, 300, 300, True)
-        img.set_from_pixbuf(pix)
+        pix = None
+        try:
+            pix = GdkPixbuf.Pixbuf.new_from_file_at_scale(img_path, 300, 300, True)
+        except GLib.GError as e:
+            print("img error")
+            print(e.message)
 
-        self.add_child_at_anchor(img, anchor)
-        img.show_all()
+            itr = self.get_buffer().get_iter_at_child_anchor(anchor)
+            self.get_buffer().insert_with_tags(itr, e.message, self.msg_tag)
+
+        if pix:
+            img.set_from_pixbuf(pix)
+
+            self.add_child_at_anchor(img, anchor)
+            img.show_all()
 
     def draw_messages(self, revealer=None):
 
