@@ -160,35 +160,44 @@ class ChatView(Gtk.TextView):
 
             self.draw_image_marker(self.get_buffer().get_end_iter(), message["message_id"])
 
+            GLib.threads_init()
+
             dl_thread = threading.Thread(target=Universe.instance().download_file, args=(message, self.draw_image, ))
             dl_thread.daemon = True
             dl_thread.start()
+
+            #Universe.instance().download_file(message, self.draw_image)
 
         else:
             print("Other type of message")
             print(message)
 
-    def load_chat(self, chat_id, revealer=None):
+    def load_chat(self, chat_id, callback=None):
 
         self.clear()
 
-        self.messages_list = Universe.instance().get_history(chat_id)
-        self.current_id = chat_id
+        def history_downloaded(history):
 
-        for message in self.messages_list:
+            self.messages_list = history
+            self.current_id = chat_id
 
-            if len(message["from_user"]["first_name"]) > self.longest_name:
-                self.longest_name = len(message["from_user"]["first_name"])
+            for message in self.messages_list:
 
-            self.setup_indent()
-            self.draw_message(message)
+                if len(message["from_user"]["first_name"]) > self.longest_name:
+                    self.longest_name = len(message["from_user"]["first_name"])
 
-        # Hide loading indicator
-        if revealer:
-            while Gtk.events_pending():
-                Gtk.main_iteration_do(False)
+                self.setup_indent()
+                self.draw_message(message)
 
-            revealer.set_reveal_child(False)
+            # Hide loading indicator
+            if callback:
+                callback()
+
+        GLib.threads_init()
+
+        history_thread = threading.Thread(target=Universe.instance().get_history, args=(chat_id, history_downloaded, ))
+        history_thread.daemon = True
+        history_thread.start()
 
     def append_message(self, item, msg_id):
 

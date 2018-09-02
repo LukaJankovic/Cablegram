@@ -66,6 +66,15 @@ class UniverseWindow(Gtk.ApplicationWindow):
         # Sidebar
         #
 
+        def chat_loaded():
+
+            while Gtk.events_pending():
+                Gtk.main_iteration_do(False)
+
+            self.chat_revealer.set_reveal_child(False)
+
+            Gdk.threads_add_idle(1000, self.scroll_to_end)
+
         def sidebar_clicked(a, row):
 
             while Gtk.events_pending():
@@ -77,15 +86,14 @@ class UniverseWindow(Gtk.ApplicationWindow):
             history = None
 
             if dialog_item.dialog_type == "user":
-                self.chat_view.load_chat(dialog_item.user["id"], self.chat_revealer)
+                self.chat_view.load_chat(dialog_item.user["id"], chat_loaded)
             elif dialog_item.dialog_type == "chat":
-                self.chat_view.load_chat(dialog_item.chat["id"], self.chat_revealer)
+                self.chat_view.load_chat(dialog_item.chat["id"], chat_loaded)
             # TODO: Add channel support
             #else:
                 #history = Universe.instance().get_history(dialog_item.channel["id"])
 
             self.chat_view.setup_indent()
-            self.scroll_to_end()
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
 

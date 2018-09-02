@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gdk, GObject
+from gi.repository import Gdk, GObject, GLib
 
 import pyrogram
 import threading
@@ -90,9 +90,15 @@ class Universe(Singleton):
     def get_dialogs(self):
         return fetch_dialogs(self.app)
 
-    def get_history(self, user_id):
+    def get_history(self, user_id, callback=None):
         try:
-            return list(reversed(self.app.get_history(user_id)["messages"]))
+            history = list(reversed(self.app.get_history(user_id)["messages"]))
+
+            if callback:
+                GLib.idle_add(callback, history)
+
+            return history
+
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
             #Flood error
             return error
@@ -144,9 +150,11 @@ class Universe(Singleton):
         GObject.threads_init()
 
         thread = downloadThread(self.app, msg)
+        thread.daemon = True
         thread.start()
+
         location = thread.join()
 
-        callback(location, msg)
+        GLib.idle_add(callback, location, msg)
 
         return location
