@@ -32,7 +32,7 @@ class ChatView(Gtk.TextView):
 
     messages_list = None
     current_id = None
-    prev_line_user = -1
+    prev_line_user = None
 
     images = None
 
@@ -121,20 +121,45 @@ class ChatView(Gtk.TextView):
             img.show_all()
 
     def draw_message(self, message):
-        #print(message)
+
+        # TODO: get_sender separate function (username, bot, etc.)
+        sender = message["from_user"]["first_name"]
 
         if message["text"]:
             # Normal message, display it
             text = message["text"]
 
-            # TODO: get_sender separate function (username, bot, etc.)
-            sender = message["from_user"]["first_name"]
+            if self.prev_line_user == sender:
+                self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), " ", self.name_tag)
+            else:
+                self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
+                self.prev_line_user = sender
 
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+
+            # TODO: Implement newlines better
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), text.replace("\n", " "), self.msg_tag)
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+
+        elif hasattr(message, 'photo'):
+            # Message is a photo
+            # Display loading indicator until image is downloaded
+
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
             self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
             self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
 
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), text.replace("\n", " "),self.msg_tag)
-            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+            self.prev_line_user = sender
+
+            self.draw_image_marker(self.get_buffer().get_end_iter(), message["message_id"])
+
+            dl_thread = threading.Thread(target=Universe.instance().download_file, args=(message, self.draw_image, ))
+            dl_thread.daemon = True
+            dl_thread.start()
+
+        else:
+            print("Other type of message")
+            print(message)
 
     def load_chat(self, chat_id, revealer=None):
 
@@ -152,44 +177,6 @@ class ChatView(Gtk.TextView):
             self.draw_message(message)
 
         # Hide loading indicator
-        if revealer:
-            while Gtk.events_pending():
-                Gtk.main_iteration_do(False)
-
-            revealer.set_reveal_child(False)
-
-    def draw_messages(self, revealer=None):
-
-        if not self.messages_list:
-            return
-
-        self.setup_indent()
-        self.clear()
-
-        for item in self.messages_list:
-
-            sender = item["sender"]
-            msg = ""
-
-            if item["msg"]["text"]:
-                msg = item["msg"]["text"]
-                self.draw_message(sender, msg)
-
-            else:
-                #image...
-
-                self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
-                self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), item["msg"]["from_user"]["first_name"], self.name_tag)
-                self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
-
-                self.prev_line_user = sender
-
-                self.draw_image_marker(self.get_buffer().get_end_iter(), item["msg"]["message_id"])
-
-                dl_thread = threading.Thread(target=Universe.instance().download_file, args=(item["msg"], self.draw_image, ))
-                dl_thread.daemon = True
-                dl_thread.start()
-
         if revealer:
             while Gtk.events_pending():
                 Gtk.main_iteration_do(False)

@@ -86,6 +86,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
             #else:
                 #history = Universe.instance().get_history(dialog_item.channel["id"])
 
+            self.chat_view.setup_indent()
             self.scroll_to_end()
 
         self.sidebar_list.connect('row-activated', sidebar_clicked)
@@ -98,7 +99,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.chat_wrapper.hscrollbar_policy = Gtk.PolicyType.NEVER
 
-        dbg = True
+        dbg = False
 
         self.chat_view = ChatView(wrap_mode=Gtk.WrapMode.WORD_CHAR,
                 editable=dbg,
@@ -118,9 +119,6 @@ class UniverseWindow(Gtk.ApplicationWindow):
         self.msg_entry.connect("activate", self.send_message)
 
     def update_sidebar(self, msg, item_id):
-
-        print("sidebar item")
-        print(msg)
 
         item = None
 
