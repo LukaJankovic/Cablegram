@@ -104,4 +104,7 @@ def clear_cache(a=None):
 def main(version):
     app = Application()
     app.connect('shutdown', clear_cache)
+
+    clear_cache()
+
     return app.run(sys.argv)

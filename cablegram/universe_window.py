@@ -76,8 +76,6 @@ class UniverseWindow(Gtk.ApplicationWindow):
             dialog_item = self.contacts[row.get_index()]
             history = None
 
-            # TODO: Cleanup
-
             if dialog_item.dialog_type == "user":
                 self.chat_view.load_chat(dialog_item.user["id"], self.chat_revealer)
             elif dialog_item.dialog_type == "chat":

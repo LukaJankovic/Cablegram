@@ -90,7 +90,14 @@ class ChatView(Gtk.TextView):
 
     def draw_image(self, img_path, msg):
 
+        if not abs(msg["chat"]["id"]) == abs(self.current_id):
+            print("Invalid ID:")
+            print(abs(msg["chat"]["id"]))
+            print(abs(self.current_id))
+            return
+
         if not img_path:
+            print("Empty path")
             return
 
         anchor = None

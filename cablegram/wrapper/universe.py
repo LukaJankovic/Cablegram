@@ -112,6 +112,16 @@ class Universe(Singleton):
 
     def download_file(self, msg, callback):
 
+        print("download")
+        print(msg)
+
+        f_path = str(Path.home()) + "/.var/app/org.gnome.Cablegram/cache/tmp/" + str(msg["message_id"])
+
+        # Don't redownload file
+        if os.path.isfile(f_path):
+            callback(f_path, msg)
+            return f_path
+
         class downloadThread(threading.Thread):
             def __init__(self, app, msg):
                 threading.Thread.__init__(self)
@@ -120,7 +130,7 @@ class Universe(Singleton):
                 self._return = None
 
             def download_media(self, app, msg):
-                location = app.download_media(msg, str(Path.home()) + "/.var/app/org.gnome.Cablegram/cache/tmp/", True, None, None)
+                location = app.download_media(msg, f_path, True, None, None)
                 return location
 
             def run(self):
