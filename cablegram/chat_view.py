@@ -76,44 +76,6 @@ class ChatView(Gtk.TextView):
         self.longest_name = -1
         self.images = []
 
-    def draw_message(self, sender, msg):
-
-#        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
-
-        if not self.prev_line_user == sender or self.prev_line_user == -1:
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
-            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
-
-            self.prev_line_user = sender
-        else:
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), " ", self.name_tag)
-            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
-
-        nmsg = msg.replace("\n", " ")
-        url_match = re.finditer(r"(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)", nmsg, re.I | re.M)
-        has_url = False
-
-        url_match = [] # Remove when URL tag fixed
-
-        for match in url_match:
-
-            if not match.start() == 0:
-                self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), nmsg[:match.start()], self.msg_tag)
-
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), nmsg[match.start():match.end()], self.msg_tag, self.url_tag)
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), nmsg[match.end():], self.msg_tag)
-
-#            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
-            has_url = True
-
-        if has_url == False:
-            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), nmsg, self.msg_tag)
-#            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
-
-        self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
-
-        return 0
-
     def draw_image_marker(self, position, name):
         anchor = self.get_buffer().create_child_anchor(position)
         self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
@@ -158,6 +120,44 @@ class ChatView(Gtk.TextView):
             self.add_child_at_anchor(img, anchor)
             img.show_all()
 
+    def draw_message(self, message):
+        #print(message)
+
+        if message["text"]:
+            # Normal message, display it
+            text = message["text"]
+
+            # TODO: get_sender separate function (username, bot, etc.)
+            sender = message["from_user"]["first_name"]
+
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), sender, self.name_tag)
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
+
+            self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), text.replace("\n", " "),self.msg_tag)
+            self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
+
+    def load_chat(self, chat_id, revealer=None):
+
+        self.clear()
+
+        self.messages_list = Universe.instance().get_history(chat_id)
+        self.current_id = chat_id
+
+        for message in self.messages_list:
+
+            if len(message["from_user"]["first_name"]) > self.longest_name:
+                self.longest_name = len(message["from_user"]["first_name"])
+
+            self.setup_indent()
+            self.draw_message(message)
+
+        # Hide loading indicator
+        if revealer:
+            while Gtk.events_pending():
+                Gtk.main_iteration_do(False)
+
+            revealer.set_reveal_child(False)
+
     def draw_messages(self, revealer=None):
 
         if not self.messages_list:
@@ -177,20 +177,6 @@ class ChatView(Gtk.TextView):
 
             else:
                 #image...
-
-
-    #            if not self.prev_line_user == sender or self.prev_line_user == -1:
-     #               self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
-      #              self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), item["msg"]["from_user"]["first_name"], self.name_tag)
-       #             self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
-
-        #            self.prev_line_user = sender
-
-   #             else:
-  #                  self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
- #                   self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), " ", self.name_tag)
-#                    self.get_buffer().insert(self.get_buffer().get_end_iter(), "\t")
-
 
                 self.get_buffer().insert(self.get_buffer().get_end_iter(), "\n")
                 self.get_buffer().insert_with_tags(self.get_buffer().get_end_iter(), item["msg"]["from_user"]["first_name"], self.name_tag)

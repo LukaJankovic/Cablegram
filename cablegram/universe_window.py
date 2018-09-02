@@ -73,33 +73,18 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
             self.chat_revealer.set_reveal_child(True)
 
-            self.chat_view.clear()
-
             dialog_item = self.contacts[row.get_index()]
             history = None
 
             # TODO: Cleanup
 
             if dialog_item.dialog_type == "user":
-                history = Universe.instance().get_history(dialog_item.user["id"])
-                self.chat_view.current_id = dialog_item.user["id"]
+                self.chat_view.load_chat(dialog_item.user["id"], self.chat_revealer)
             elif dialog_item.dialog_type == "chat":
-                history = Universe.instance().get_history(dialog_item.chat["id"])
-                self.chat_view.current_id = dialog_item.chat["id"]
+                self.chat_view.load_chat(dialog_item.chat["id"], self.chat_revealer)
             # TODO: Add channel support
             #else:
                 #history = Universe.instance().get_history(dialog_item.channel["id"])
-            #print(history)
-
-            self.chat_view.messages_list = []
-
-            for msg in history:
-                #print(msg)
-                #if hasattr(msg, 'text'):
-                self.chat_view.add_message(msg["from_user"]["first_name"], msg)
-
-            self.chat_view.setup_indent()
-            self.chat_view.draw_messages(self.chat_revealer)
 
             self.scroll_to_end()
 
@@ -113,9 +98,11 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.chat_wrapper.hscrollbar_policy = Gtk.PolicyType.NEVER
 
+        dbg = True
+
         self.chat_view = ChatView(wrap_mode=Gtk.WrapMode.WORD_CHAR,
-                editable=False,
-                cursor_visible=False)
+                editable=dbg,
+                cursor_visible=dbg)
         self.chat_wrapper.add(self.chat_view)
         self.chat_wrapper.show_all()
 
