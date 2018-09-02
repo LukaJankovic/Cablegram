@@ -1,5 +1,7 @@
 # dialog.py
 #
+# Fetches and parses sidebar list
+#
 # Copyright 2018 LukaJankovic
 #
 # This program is free software: you can redistribute it and/or modify
@@ -51,7 +53,10 @@ def input_peer_from_channel(channel_peer, a_hash):
 
 def download_dialogs_raw(client, o_date, o_id, o_peer):
     try:
-        return client.send(functions.messages.GetDialogs(offset_date=o_date, offset_id=o_id, offset_peer=o_peer, limit=0))
+        return client.send(functions.messages.GetDialogs(offset_date=o_date,
+                                                         offset_id=o_id,
+                                                         offset_peer=o_peer,
+                                                         limit=0))
     except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
         #Flood error
         return error
@@ -77,9 +82,6 @@ def parse_dialogs(dialogs):
                 if user["id"] == dialog["peer"]["user_id"]:
                     current_user = user
 
-            if not current_user:
-                print("Something has gone terribly wrong...")
-
             current_message = None
             for message in dialogs["messages"]:
                 if message["id"] == dialog["top_message"]:
@@ -92,7 +94,11 @@ def parse_dialogs(dialogs):
             else:
                 from_user = "you"
 
-            return_item = create_dialog_item(dialog=dialog, user=current_user, dialog_type="user", message=current_message, from_user=from_user)
+            return_item = create_dialog_item(dialog=dialog,
+                                             user=current_user,
+                                             dialog_type="user",
+                                             message=current_message,
+                                             from_user=from_user)
 
             new_dialogs.append(return_item)
 
@@ -101,9 +107,6 @@ def parse_dialogs(dialogs):
             for chat in dialogs["chats"]:
                 if chat["id"] == dialog["peer"]["chat_id"]:
                     current_chat = chat
-
-            if not current_chat:
-                print("Something has gone terribly wrong 2")
 
             current_message = None
             for message in dialogs["messages"]:
@@ -115,7 +118,12 @@ def parse_dialogs(dialogs):
                 if user["id"] == current_message["from_id"]:
                     from_user = user
 
-            return_item = create_dialog_item(dialog=dialog, chat=current_chat, dialog_type="chat", message=current_message, from_user=from_user)
+            return_item = create_dialog_item(dialog=dialog,
+                                             chat=current_chat,
+                                             dialog_type="chat",
+                                             message=current_message,
+                                             from_user=from_user)
+
             new_dialogs.append(return_item)
 
         elif type(dialog["peer"]) == types.PeerChannel:
@@ -124,18 +132,17 @@ def parse_dialogs(dialogs):
                 if channel["id"] == dialog["peer"]["channel_id"]:
                     current_channel = channel
 
-            if not current_channel:
-                print("if something wrong was so good why isn't there a something wrong 2?")
-
             current_message = None
             for message in dialogs["messages"]:
                 if message["id"] == dialog["top_message"]:
                     current_message = message
 
-            if not current_message:
-                print("despacito error")
+            return_item = create_dialog_item(dialog=dialog,
+                                             channel=current_channel,
+                                             dialog_type="channel",
+                                             message=message,
+                                             from_user=current_channel["title"])
 
-            return_item = create_dialog_item(dialog=dialog, channel=current_channel, dialog_type="channel", message=message, from_user=current_channel["title"])
             new_dialogs.append(return_item)
 
         else:
@@ -177,13 +184,14 @@ def fetch_dialogs(client):
                         #Carry on...
                         pass
                 latest_peer = input_peer_from_channel(latest_item, a_hash)
-            else:
-                print("something has gone horribly wrong: the pre-sequel")
 
             latest_date = dialogs_complete[total_dialogs-1].message["date"]
             latest_id = dialogs_complete[total_dialogs-1].message["id"]
 
-            n_dialogs = download_dialogs_raw(client, latest_date, latest_id, latest_peer)
+            n_dialogs = download_dialogs_raw(client,
+                                             latest_date,
+                                             latest_id,
+                                             latest_peer)
 
             dialogs_complete.extend(parse_dialogs(n_dialogs))
             total_dialogs = len(dialogs_complete)

@@ -135,6 +135,7 @@ class ChatView(Gtk.TextView):
         for i in self.images :
             if i["id"] == msg["message_id"]:
                 anchor = i["anchor"]
+                i["spinner"].destroy()
 
         if anchor == None:
             print("anchor none")

@@ -69,8 +69,8 @@ class Universe(Singleton):
             @self.app.on_message()
             def message_recieved(client, message):
                 for cb in self.incoming_callbacks:
-                    if hasattr(message, "text") and hasattr(message, "chat"):
-                        Gdk.threads_add_idle(100, cb, {"sender":message["from_user"], "msg":message["text"]}, message["chat"]["id"])
+                    if hasattr(message, "chat"):
+                        Gdk.threads_add_idle(100, cb, {"sender":message["from_user"], "msg":message}, message["chat"]["id"])
 
             return None
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:

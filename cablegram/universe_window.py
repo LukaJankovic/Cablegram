@@ -132,6 +132,9 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
     def update_sidebar(self, msg, item_id):
 
+        print("sidebar item")
+        print(msg)
+
         item = None
 
         if item_id < 0:
@@ -140,12 +143,11 @@ class UniverseWindow(Gtk.ApplicationWindow):
         for sidebar_item in self.sidebar_list.get_children():
             if item_id == sidebar_item.element_id:
                 item = sidebar_item
-                if msg["sender"]["id"] == Universe.instance().me["id"]:
-                    item.chat_label.set_text("You: "+msg["msg"])
-                else:
-                    item.chat_label.set_text(msg["msg"])
-
-                # TODO: chats...
+                if hasattr(msg["msg"], "text"):
+                    if msg["sender"]["id"] == Universe.instance().me["id"]:
+                        item.chat_label.set_text("You: "+msg["msg"]["text"])
+                    else:
+                        item.chat_label.set_text(msg["msg"]["text"])
 
         if item:
             self.sidebar_list.remove(item)
@@ -222,16 +224,44 @@ class UniverseWindow(Gtk.ApplicationWindow):
                     sidebarItem.element_id = dialog.dialog["peer"]["channel_id"]
 
                 try:
+
+                    message = dialog.message["message"]
+                    if not message:
+                        if dialog.message["media"]:
+                            if isinstance(dialog.message["media"], pyrogram.api.types.MessageMediaPhoto):
+                                message = "Photo"
+
+                            elif isinstance(dialog.message["media"], pyrogram.api.types.MessageMediaGeo) or isinstance(dialog.message["media"], pyrogram.api.types.MessageMediaGeoLive):
+                                message = "Location"
+
+                            elif isinstance(dialog.message["media"], pyrogram.api.types.MessageMediaContact):
+                                message = "Contact"
+
+                            elif isinstance(dialog.message["media"], pyrogram.api.types.MessageMediaDocument):
+                                message = "File"
+
+                            elif isinstance(dialog.message["media"], pyrogram.api.types.MessageMediaGame):
+                                message = "Game"
+
+                            elif isinstance(dialog.message["media"], pyrogram.api.types.MessageMediaInvoice):
+                                message = "Invoice"
+
+                            elif isinstance(dialog.message["media"], pyrogram.api.types.MessageMediaVenue):
+                                message = "Venue"
+
+                            elif isinstance(dialog.message["media"], pyrogram.api.types.MessageMediaWebPage):
+                                message = "Web Page"
+
                     if dialog.dialog_type == "user" and dialog.from_user == "you":
                         if dialog.from_user == "you":
-                            sidebarItem.chat_label.set_text("You: "+dialog.message["message"].replace("\n", " "))
+                            sidebarItem.chat_label.set_text("You: "+message.replace("\n", " "))
                     elif dialog.dialog_type == "chat":
                         if dialog.from_user["id"] == Universe.instance().me["id"]:
-                            sidebarItem.chat_label.set_text("You: "+dialog.message["message"].replace("\n", " "))
+                            sidebarItem.chat_label.set_text("You: "+message.replace("\n", " "))
                         else:
-                            sidebarItem.chat_label.set_text(dialog.from_user["first_name"]+": "+dialog.message["message"].replace("\n", " "))
+                            sidebarItem.chat_label.set_text(dialog.from_user["first_name"]+": "+message.replace("\n", " "))
                     else:
-                        sidebarItem.chat_label.set_text(dialog.message["message"].replace("\n", " "))
+                        sidebarItem.chat_label.set_text(message.replace("\n", " "))
                 except AttributeError as e:
                     print("Unexpected message")
                     print("Error:")
@@ -246,5 +276,4 @@ class UniverseWindow(Gtk.ApplicationWindow):
         self.chat_view.append_message({"sender":Universe.instance().me, "msg":self.msg_entry.get_text()}, self.chat_view.current_id)
         self.msg_entry.set_text("")
 
-        # TODO: Implement autoscroll on message send better
         Gdk.threads_add_idle(1000, self.scroll_to_end)
