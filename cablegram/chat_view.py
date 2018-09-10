@@ -178,10 +178,9 @@ class ChatView(Gtk.TextView):
 
         def history_downloaded(history):
 
-            self.messages_list = history
             self.current_id = chat_id
 
-            for message in self.messages_list:
+            for message in history:
 
                 if len(message["from_user"]["first_name"]) > self.longest_name:
                     self.longest_name = len(message["from_user"]["first_name"])
@@ -198,23 +197,6 @@ class ChatView(Gtk.TextView):
         history_thread = threading.Thread(target=Universe.instance().get_history, args=(chat_id, history_downloaded, ))
         history_thread.daemon = True
         history_thread.start()
-
-    def append_message(self, item, msg_id):
-
-        if msg_id < 0:
-            msg_id *= -1
-
-        if not item:
-            return
-
-        if not msg_id == self.current_id:
-            return
-
-        sender = item["sender"]["first_name"]
-        msg = item["msg"]
-
-        self.add_message(item["sender"], item["msg"])
-        self.draw_message(sender, msg)
 
     def add_message(self, sender, msg):
 

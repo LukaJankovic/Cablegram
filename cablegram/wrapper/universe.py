@@ -69,8 +69,7 @@ class Universe(Singleton):
             @self.app.on_message()
             def message_recieved(client, message):
                 for cb in self.incoming_callbacks:
-                    if hasattr(message, "chat"):
-                        Gdk.threads_add_idle(100, cb, {"sender":message["from_user"], "msg":message}, message["chat"]["id"])
+                    Gdk.threads_add_idle(100, cb, message)
 
             return None
         except pyrogram.api.errors.exceptions.flood_420.FloodWait as error:
@@ -114,12 +113,9 @@ class Universe(Singleton):
             return error
 
     def send_message(self, msg, chat_id):
-        self.app.send_message(chat_id, msg)
+        return self.app.send_message(chat_id, msg)
 
     def download_file(self, msg, callback):
-
-        print("download")
-        print(msg)
 
         f_path = str(Path.home()) + "/.var/app/org.gnome.Cablegram/cache/tmp/" + str(msg["message_id"])
 

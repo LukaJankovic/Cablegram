@@ -115,7 +115,7 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.chat_view.setup_indent()
 
-        Universe.instance().incoming_callbacks.append(self.chat_view.append_message)
+        Universe.instance().incoming_callbacks.append(self.incoming_message)
         Universe.instance().incoming_callbacks.append(self.update_sidebar)
 
         #
@@ -124,9 +124,10 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
         self.msg_entry.connect("activate", self.send_message)
 
-    def update_sidebar(self, msg, item_id):
+    def update_sidebar(self, msg):
 
         item = None
+        item_id = msg["chat"]["id"]
 
         if item_id < 0:
             item_id *= -1
@@ -134,11 +135,11 @@ class UniverseWindow(Gtk.ApplicationWindow):
         for sidebar_item in self.sidebar_list.get_children():
             if item_id == sidebar_item.element_id:
                 item = sidebar_item
-                if hasattr(msg["msg"], "text"):
-                    if msg["sender"]["id"] == Universe.instance().me["id"]:
-                        item.chat_label.set_text("You: "+msg["msg"]["text"])
+                if hasattr(msg, "text"):
+                    if msg["from_user"]["id"] == Universe.instance().me["id"]:
+                        item.chat_label.set_text("You: "+msg["text"])
                     else:
-                        item.chat_label.set_text(msg["msg"]["text"])
+                        item.chat_label.set_text(msg["text"])
 
         if item:
             self.sidebar_list.remove(item)
@@ -262,9 +263,25 @@ class UniverseWindow(Gtk.ApplicationWindow):
 
                 self.sidebar_list.insert(sidebarItem, -1)
 
+    def incoming_message(self, msg):
+
+        if not msg:
+            return
+
+        chat_id = msg["chat"]["id"]
+
+        if not abs(chat_id) == abs(self.chat_view.current_id):
+            return
+
+        self.chat_view.draw_message(msg)
+        Gdk.threads_add_idle(1000, self.scroll_to_end)
+
     def send_message(self, sender):
-        Universe.instance().send_message(self.msg_entry.get_text(), self.chat_view.current_id)
-        self.chat_view.append_message({"sender":Universe.instance().me, "msg":self.msg_entry.get_text()}, self.chat_view.current_id)
-        self.msg_entry.set_text("")
+        sent_msg = Universe.instance().send_message(self.msg_entry.get_text(), self.chat_view.current_id)
+
+        if sent_msg:
+            self.chat_view.draw_message(sent_msg)
+            self.update_sidebar(sent_msg)
+            self.msg_entry.set_text("")
 
         Gdk.threads_add_idle(1000, self.scroll_to_end)
