@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from gi.repository import Gdk, GObject, GLib
+from gi.repository import Gdk, GObject, GLib, Notify
 
 import pyrogram
 import threading
@@ -68,6 +68,10 @@ class Universe(Singleton):
 
             @self.app.on_message()
             def message_recieved(client, message):
+
+                Notify.init("Cablegram")
+                Notify.Notification.new("New Message").show()
+
                 for cb in self.incoming_callbacks:
                     Gdk.threads_add_idle(100, cb, message)
 

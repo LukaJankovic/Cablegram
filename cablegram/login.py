@@ -36,9 +36,6 @@ class LoginWindow(Gtk.Dialog):
 
     __gtype_name__ = 'LoginWindow'
 
-    #api_page = GtkTemplate.Child()
-    #phone_page = GtkTemplate.Child()
-    #code_page = GtkTemplate.Child()
     api_id = GtkTemplate.Child()
     api_hash = GtkTemplate.Child()
     phone_entry = GtkTemplate.Child()
@@ -212,7 +209,7 @@ class LoginWindow(Gtk.Dialog):
         #Fix buttons
         if page == "intro":
             self.back_button.set_label("Quit")
-            self.back_button.set_label("Next")
+            self.next_button.set_label("Next")
             self.next_button.set_sensitive(True)
 
         elif page == "code":
@@ -222,7 +219,7 @@ class LoginWindow(Gtk.Dialog):
 
         else:
             self.back_button.set_label("Back")
-            self.back_button.set_label("Next")
+            self.next_button.set_label("Next")
 
         # Other setup
         if page == "api":
